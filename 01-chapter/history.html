@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ایستگاه زمانی رایانش | از چرخ‌دنده تا تراشه</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            purple: '#ab00ff',
+                            green: '#00ff66',
+                            amber: '#ffb700',
+                            rose: '#ff0055'
+                        },
+                        darkbg: '#0a0d14',
+                        cardbg: '#121824',
+                        borderbg: '#1e293b'
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 243, 255, 0.4)',
+                        'neon-purple': '0 0 15px rgba(171, 0, 255, 0.4)',
+                        'neon-green': '0 0 15px rgba(0, 255, 102, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0a0d14;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+        /* Custom Glowing Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0d14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+        .tech-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+        .glow-text-cyan {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+        }
+        .glow-text-purple {
+            text-shadow: 0 0 10px rgba(171, 0, 255, 0.6);
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 50%;
+            width: 4px;
+            background: linear-gradient(180deg, #00f3ff 0%, #ab00ff 50%, #00ff66 100%);
+            transform: translateX(50%);
+            z-index: 0;
+        }
+        @media (max-width: 768px) {
+            .timeline-line::before {
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="tech-grid min-h-screen flex flex-col selection:bg-neon-cyan selection:text-black">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-darkbg/80 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neon-cyan to-neon-purple flex items-center justify-center text-black font-extrabold text-xl shadow-neon-cyan">
+                    <i class="fa-solid font-mono fa-terminal"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wide text-white flex items-center gap-2">
+                        پایگاه تاریخچه رایانش
+                        <span class="text-xs bg-cyan-950 text-neon-cyan border border-neon-cyan/40 px-2 py-0.5 rounded-full font-mono">پایه دهم</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">ویژه هنرجویان رشته شبکه و نرم‌افزار رایانه</p>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center gap-3">
+                <button id="soundToggleBtn" onclick="toggleAudio()" class="px-3 py-2 bg-slate-900 border border-slate-700 hover:border-neon-cyan rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2 transition-all">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-neon-cyan"></i>
+                    <span id="soundText" class="hidden sm:inline">افکت صوتی: فعال</span>
+                </button>
+                <a href="#quiz-section" class="px-4 py-2 bg-gradient-to-r from-neon-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold rounded-lg text-xs transition-all shadow-neon-cyan flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-base"></i>
+                    <span>چالش هکر (آزمون)</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-cardbg to-slate-950 border border-slate-800 p-8 sm:p-12 shadow-2xl">
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-neon-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-neon-purple/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-neon-cyan text-xs font-mono">
+                        <span class="w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></span>
+                        سفر از ماشین‌های مکانیکی ۱۸۲۲ تا ابررایانه‌های جیبی
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+                        از <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-blue-400 to-neon-purple glow-text-cyan">چرخ‌دنده‌های بابیج</span> 
+                        تا <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-emerald-400">شبکه ملی ایران</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        سلام هنرجوی عزیز! رایانه‌ای که امروز برنامه‌نویسی می‌کنی یا با آن بازی می‌کنی، حاصل بیش از دو قرن ایده‌پردازی، ریاضیات و مهندسی است. در این ایستگاه تعاملی، مسیر پرفراز و نشیب اختراع اولین محاسبگرها تا ورود مین‌فریم‌ها به ایران را کاوش کن!
+                    </p>
+                    
+                    <!-- Stats Quick Badges -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="block text-2xl font-black text-neon-cyan font-mono">1822</span>
+                            <span class="text-xs text-slate-400">ایده ماشین تفاضلی</span>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="block text-2xl font-black text-neon-purple font-mono">1840s</span>
+                            <span class="text-xs text-slate-400">اولین کدنویس تاریخ</span>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="block text-2xl font-black text-neon-green font-mono">1945</span>
+                            <span class="text-xs text-slate-400">تولد ENIAC الکترونیکی</span>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="block text-2xl font-black text-neon-amber font-mono">1340s</span>
+                            <span class="text-xs text-slate-400">ورود رایانه به ایران</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Interactive Micro-Card -->
+                <div class="lg:col-span-4 flex justify-center">
+                    <div class="w-full max-w-sm bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 shadow-2xl relative group hover:border-neon-cyan transition-all">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                            <span class="text-xs font-mono text-neon-cyan"><i class="fa-solid fa-microchip ml-1"></i> کارت هویت تکنولوژی</span>
+                            <span class="text-xs text-slate-500">نسل کنونی</span>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">سرعت پردازش:</span>
+                                <span class="text-neon-green font-mono">میلیاردها دستور در ثانیه</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">حافظه رم اولیه (ENIAC):</span>
+                                <span class="text-neon-rose font-mono">چند صد بیت!</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">حافظه امروزی:</span>
+                                <span class="text-neon-cyan font-mono">چندین ترابایت</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                                <div class="bg-gradient-to-r from-neon-cyan to-neon-purple h-full w-full animate-pulse"></div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-4 text-center italic">
+                            «ماشین‌ها می‌توانند فراتر از محاسبات ریاضی ساده عمل کنند.» — آدا لاولیس
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-3 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('global')" id="tab-global" class="tab-btn active px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-neon-cyan to-blue-600 text-black shadow-neon-cyan">
+                <i class="fa-solid fa-globe"></i>
+                <span>تایم‌لاین تحولات جهانی</span>
+            </button>
+            <button onclick="switchTab('iran')" id="tab-iran" class="tab-btn px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-flag"></i>
+                <span>تاریخچه ورود رایانه به ایران</span>
+            </button>
+            <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-sliders"></i>
+                <span>مقایسه ابعاد و قدرت نسل‌ها</span>
+            </button>
+            <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="tab-btn px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-book-bookmark"></i>
+                <span>واژه‌نامه و نکات امتحانی</span>
+            </button>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-cardbg p-4 rounded-2xl border border-slate-800">
+            <div class="relative w-full sm:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="filterContent()" placeholder="جستجو در رویدادها، افراد (مانند تورینگ، بابیج، IBM)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pr-10 pl-4 py-2 text-sm text-white focus:outline-none focus:border-neon-cyan transition-all">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+                <span class="text-xs text-slate-400 whitespace-nowrap"><i class="fa-solid fa-filter ml-1"></i> فیلتر عصر:</span>
+                <button onclick="filterEra('all')" class="era-filter-btn text-xs px-3 py-1.5 rounded-lg bg-neon-cyan text-black font-bold">همه</button>
+                <button onclick="filterEra('mechanical')" class="era-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">مکانیکی و آنالوگ</button>
+                <button onclick="filterEra('electronic')" class="era-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">الکترونیکی و ترانزیستور</button>
+                <button onclick="filterEra('personal')" class="era-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">شخصی و وب</button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: GLOBAL TIMELINE -->
+        <div id="view-global" class="tab-content relative timeline-line py-6 space-y-12">
+
+            <!-- Item 1: 1822 Charles Babbage -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="mechanical" data-search="چارلز بابیج ماشین تفاضلی 1822 1200 ریاضی دان مکانیکی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8 text-right md:text-left">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-cyan p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-cyan-950 text-neon-cyan border border-neon-cyan/30">۱۸۲۲ میلادی (۱۲۰۰ شمسی)</span>
+                            <i class="fa-solid fa-gear text-neon-cyan text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">چارلز بابیج و ماشین تفاضلی</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            چارلز بابیج، ریاضیدان و مهندس بریتانیایی، تصمیم گرفت ماشینی مکانیکی برای محاسبات ریاضی پیچیده بسازد. اگرچه این دستگاه کامل ساخته نشد، اما ایده اولیه **پایه‌گذاری مفهوم رایانه مدرن** را شکل داد.
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                            <span><i class="fa-solid fa-lightbulb text-neon-amber ml-1"></i> نکته هنرجویی:</span>
+                            <span class="text-slate-300">نخستین معماری مکانیکی محاسبات</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Circle Marker -->
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-cyan flex items-center justify-center text-neon-cyan shadow-neon-cyan my-2 md:my-0">
+                    <i class="fa-solid fa-calculator text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-cyan block mb-1">ویژگی اصلی ماشین تفاضلی:</strong>
+                        استفاده از چرخ‌دنده‌ها، اهرم‌ها و کارت‌های سوراخ‌دار جهت حذف خطای انسانی در جدول‌های ریاضی.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2: 1840s Ada Lovelace -->
+            <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center justify-between group" data-era="mechanical" data-search="آدا لاولیس برنامه نویس الگوریتم 1840 بایرون">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pr-8 text-right">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-purple p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-purple-950 text-neon-purple border border-neon-purple/30">دهه ۱۸۴۰ میلادی</span>
+                            <i class="fa-solid fa-code text-neon-purple text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">آدا لاولیس؛ نخستین برنامه‌نویس تاریخ</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            آدا لاولیس (دختر لرد بایرون) با چارلز بابیج آشنا شد. او الگوریتم‌هایی برای ماشین بابیج نوشت و ثابت کرد رایانه‌ها می‌توانند کارهایی فراتر از محاسبات ساده ریاضی (مانند پردازش موسیقی و نمادها) انجام دهند.
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                            <span><i class="fa-solid fa-award text-neon-purple ml-1"></i> افتخار تاریخ:</span>
+                            <span class="text-slate-300">ثبت عنوان نخستین برنامه‌نویس جهان</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-purple flex items-center justify-center text-neon-purple shadow-neon-purple my-2 md:my-0">
+                    <i class="fa-solid fa-user-code text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pl-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-purple block mb-1">مفهوم الگوریتم:</strong>
+                        مجموعه‌ای از دستورالعمل‌های مرحله به مرحله برای حل یک مسئله؛ دقیقا آنچه امروزه در پایتون، سی‌شارپ یا ++C می‌نویسید!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3: 1930s Alan Turing -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="electronic" data-search="آلن تورینگ دیجیتال تورینگ 1930 صفر و یک رایانه مدرن">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-cyan p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-cyan-950 text-neon-cyan border border-neon-cyan/30">دهه ۱۹۳۰ میلادی</span>
+                            <i class="fa-solid fa-brain text-neon-cyan text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">آلن تورینگ و پایه رایانه‌های دیجیتال</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            آلن تورینگ مفهوم رایانه‌های دیجیتال و «ماشین تورینگ» را معرفی کرد. او نشان داد که چگونه یک ماشین می‌تواند با پیروی از منطق منطقی و سیگنال‌های صفر و یک، هر نوع پردازش محاسباتی پیچیده را شبیه‌سازی کند.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-cyan flex items-center justify-center text-neon-cyan shadow-neon-cyan my-2 md:my-0">
+                    <i class="fa-solid fa-microchip text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-cyan block mb-1">گذار از آنالوگ به دیجیتال:</strong>
+                        رایانه‌های آنالوگ با ولتاژهای پیوسته کار می‌کردند؛ تورینگ منطق دیجیتال با حالات قطعی (0 و 1) را تثبیت کرد.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4: 1945 ENIAC -->
+            <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center justify-between group" data-era="electronic" data-search="انیاک ENIAC 1945 جنگ جهانی دوم الکترونیکی لامپ خلا">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pr-8 text-right">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-green p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-emerald-950 text-neon-green border border-neon-green/30">۱۹۴۵ میلادی (پایان جنگ جهانی دوم)</span>
+                            <i class="fa-solid fa-bolt text-neon-green text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">رایانه ENIAC؛ اولین غول الکترونیکی</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            رایانه ENIAC اولین رایانه کاملا الکترونیکی عمومی در جهان بود. این ماشین غول‌پیکر (با وزنی حدود ۳۰ تن و ۱۸,۰۰۰ لامپ خلاء) توانست محاسباتی که روزها طول می‌کشید را در چند دقیقه انجام دهد.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-green flex items-center justify-center text-neon-green shadow-neon-green my-2 md:my-0">
+                    <i class="fa-solid fa-server text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pl-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-green block mb-1">جهش بزرگ سرعت:</strong>
+                        جایگزینی قطعات مکانیکی با لامپ‌های خلاء جریان الکترونیکی را سرعت بخشید.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5: 1970s Semiconductors -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="electronic" data-search="1970 نیمه هادی مدار مجتمع IC تراشه کوچکتر">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-amber p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-amber-950 text-neon-amber border border-neon-amber/30">دهه ۱۹۷۰ میلادی</span>
+                            <i class="fa-solid fa-cubes text-neon-amber text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">انقلاب نیمه‌هادی‌ها و مدارهای مجتمع (IC)</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            با بهبود تکنولوژی سیلیکون و مدارهای مجتمع، هزاران ترانزیستور روی یک تراشه کوچک قرار گرفتند. این اتفاق باعث شد رایانه‌ها فوق‌العاده کوچک‌تر، سریع‌تر و ارزان‌تر شوند.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-amber flex items-center justify-center text-neon-amber shadow-neon-green my-2 md:my-0">
+                    <i class="fa-solid fa-microchip text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-amber block mb-1">پیدایش ریزپردازنده‌ها:</strong>
+                        کوچک‌سازی باعث خروج رایانه از اتاق‌های نظامی و ورود به دانشگاه‌ها و صنایع گردید.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 6: 1980s PC Boom -->
+            <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center justify-between group" data-era="personal" data-search="1981 1984 IBM Apple مکینتاش گرافیکی PC شخصی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pr-8 text-right">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-cyan p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-cyan-950 text-neon-cyan border border-neon-cyan/30">دهه ۱۹۸۰ (۱۹۸۱ و ۱۹۸۴)</span>
+                            <i class="fa-solid fa-desktop text-neon-cyan text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">ظهور رایانه‌های شخصی (PC) و رابط گرافیکی</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            در سال **۱۹۸۱** شرکت IBM اولین PC خود را معرفی کرد. سپس در سال **۱۹۸۴** شرکت اپل با معرفی **مکینتاش (Macintosh)** و رابط گرافیکی (GUI) و موس، رایانه را برای عموم مردم جذاب و ساده ساخت.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-cyan flex items-center justify-center text-neon-cyan shadow-neon-cyan my-2 md:my-0">
+                    <i class="fa-solid fa-display text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pl-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-cyan block mb-1">تحول GUI:</strong>
+                        تغییر از خط فرمان متنی (Command Line) به پنجره‌ها، آیکون‌ها و منوها.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 7: 1990s World Wide Web -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="personal" data-search="1990 اینترنت وب تیم برنرزلی WWW شبکه جهانی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-purple p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-purple-950 text-neon-purple border border-neon-purple/30">دهه ۱۹۹۰ میلادی</span>
+                            <i class="fa-solid fa-network-wired text-neon-purple text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">توسعه شبکه جهانی وب (WWW)</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            با اختراع وب توسط **تیم برنرزلی**، اینترنت به سرعت همه‌گیر شد. ارتباطات، خدمات آنلاین و توسعه نرم‌افزار تحولی بنیادین یافتند و رایانه به پنجره‌ای رو به جهان تبدیل شد.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-purple flex items-center justify-center text-neon-purple shadow-neon-purple my-2 md:my-0">
+                    <i class="fa-solid fa-globe text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-purple block mb-1">عصر امروزی:</strong>
+                        تبدیل رایانه‌های بزرگ غول‌پیکر به گوشی‌های هوشمند و دستگاه‌های جیبی با قدرت پردازش میلیاردها برابر گذشته!
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- VIEW 2: IRAN COMPUTER HISTORY -->
+        <div id="view-iran" class="tab-content hidden relative timeline-line py-6 space-y-12">
+
+            <!-- Iran 1340s -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="electronic" data-search="1340 واردات مین فریم دانشگاه IBM ایران اصلی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-green p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-emerald-950 text-neon-green border border-neon-green/30">دهه ۱۳۴۰ شمسی (۱۹۶۰ میلادی)</span>
+                            <i class="fa-solid fa-building-columns text-neon-green text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">ورود نخستین رایانه‌ها به ایران</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            نخستین رایانه‌ها از نوع **Mainframe (رایانه‌های بزرگ)** از شرکت‌های معروفی مانند IBM وارد کشور شدند و عمدتاً در دانشگاه‌ها و مراکز تحقیقاتی و آماری نصب گردیدند.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-green flex items-center justify-center text-neon-green shadow-neon-green my-2 md:my-0">
+                    <i class="fa-solid fa-landmark text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-green block mb-1">ویژگی رایانه‌های بزرگ (Mainframe):</strong>
+                        دستگاه‌هایی به اندازه چند کمد بزرگ با توان پردازش متمرکز داده‌های دانشگاهی و محاسبات ملی.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iran 1350s -->
+            <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center justify-between group" data-era="electronic" data-search="1350 بانک ها سازمان های دولتی صنایع سیستم اطلاعاتی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pr-8 text-right">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-cyan p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-cyan-950 text-neon-cyan border border-neon-cyan/30">دهه ۱۳۵۰ شمسی</span>
+                            <i class="fa-solid fa-building-columns text-neon-cyan text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">گسترش در بانک‌ها و ادارات دولتی</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            در این دهه ضرورت استفاده از سیستم‌های اطلاعاتی مکانیزه برای افزایش دقت و سرعت احساس شد. بانک‌ها، وزارتخانه‌ها و صنایع بزرگ ایران تجهیز به رایانه را آغاز کردند.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-cyan flex items-center justify-center text-neon-cyan shadow-neon-cyan my-2 md:my-0">
+                    <i class="fa-solid fa-vault text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pl-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-cyan block mb-1">مکانیزاسیون داده‌ها:</strong>
+                        آغاز شکل‌گیری اولین پایگاه‌های داده سازمان یافته دولتی و بانکی در ایران.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iran 1357 - 1367 -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="electronic" data-search="1357 1367 انقلاب اسلامی دفاع مقدس جنگ وقفه بازسازی">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-rose p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-rose-950 text-neon-rose border border-neon-rose/30">۱۳۵۷ تا ۱۳۶۷ شمسی (انقلاب و دفاع مقدس)</span>
+                            <i class="fa-solid fa-shield-halved text-neon-rose text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">دوران وقفه و حفظ زیرساخت‌ها</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            با وقوع انقلاب اسلامی و سپس جنگ تحمیلی، توسعه فناوری با کندی و وقفه مواجه شد. اما سازمان‌های حیاتی و دانشگاه‌ها با اتکا به متخصصان داخلی تلاش کردند سیستم‌های موجود را فعال نگه‌دارند.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-rose flex items-center justify-center text-neon-rose shadow-neon-rose my-2 md:my-0">
+                    <i class="fa-solid fa-wrench text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-rose block mb-1">خودکفایی و نگهداری:</strong>
+                        تلاش متخصصان ایرانی برای نگهداری نرم‌افزارها و سخت‌افزارهای پیچیده مین‌فریم در شرایط تحریم و جنگ.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iran 1370s -->
+            <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center justify-between group" data-era="personal" data-search="1370 رایانه شخصی مدارس منازل بازسازی هنرستان">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pr-8 text-right">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-amber p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-amber-950 text-neon-amber border border-neon-amber/30">دهه ۱۳۷۰ شمسی</span>
+                            <i class="fa-solid fa-graduation-cap text-neon-amber text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">رونق رایانه‌های شخصی (PC) در مدارس و منازل</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            با آغاز دوران بازسازی، PCها وارد بازار ایران شدند. ورود رایانه به مدارس، دانشگاه‌ها، هنرستان‌ها و خانه‌های مردم جهش بزرگ آموزشی و آشنایی عمومی با کامپیوتر را رقم زد.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-amber flex items-center justify-center text-neon-amber shadow-neon-amber my-2 md:my-0">
+                    <i class="fa-solid fa-school text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pl-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-amber block mb-1">رشته کامپیوتر در هنرستان:</strong>
+                        شکل‌گیری آموزش‌های تخصصی رشته کامپیوتر و نرم‌افزار برای هنرجویان مقطع متوسطه.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iran 1380s -->
+            <div class="timeline-item relative flex flex-col md:flex-row items-center justify-between group" data-era="personal" data-search="1380 اینترنت اتصال وب توسعه نرم افزار شبکه">
+                <div class="w-full md:w-5/12 mb-4 md:mb-0 md:pl-8">
+                    <div class="bg-cardbg border border-slate-800 hover:border-neon-cyan p-6 rounded-2xl transition-all shadow-xl group-hover:scale-[1.02]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-cyan-950 text-neon-cyan border border-neon-cyan/30">دهه ۱۳۸۰ شمسی</span>
+                            <i class="fa-solid fa-wifi text-neon-cyan text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">انقلاب اینترنت و توسعه نرم‌افزارهای ایرانی</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            ایران به شبکه جهانی وب پیوست. شرکت‌های نرم‌افزاری بومی متولد شدند، خدمات الکترونیکی گسترش یافت و اینترنت جزئی جداپذیر از زندگی و صنعت کشور شد.
+                        </p>
+                    </div>
+                </div>
+                <div class="z-10 w-12 h-12 rounded-full bg-slate-900 border-4 border-neon-cyan flex items-center justify-center text-neon-cyan shadow-neon-cyan my-2 md:my-0">
+                    <i class="fa-solid fa-network-wired text-sm"></i>
+                </div>
+                <div class="w-full md:w-5/12 md:pr-8">
+                    <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl text-xs text-slate-400">
+                        <strong class="text-neon-cyan block mb-1">اکوسیستم فناوری امروز:</strong>
+                        زمينه‌ساز شکل‌گیری استارت‌آپ‌ها، پیام‌رسان‌ها، خدمات بانکی آنلاین و برنامه‌نویسی مدرن امروز.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- VIEW 3: COMPARISON MATRIX -->
+        <div id="view-compare" class="tab-content hidden space-y-8">
+            <div class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8">
+                <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-neon-cyan"></i>
+                    مقایسه سیر تحول سخت‌افزار و معماری
+                </h3>
+                <p class="text-xs text-slate-400 mb-6">با جابه‌جایی اسلایدر یا انتخاب نسل‌ها، تغییر شگفت‌انگیز حجم، سرعت و کاربری را ببینید.</p>
+
+                <!-- Interactive Era Comparator Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Era Card 1 -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-neon-cyan transition-all">
+                        <div class="text-xs font-mono text-slate-500 mb-1">۱۸۲۲ - ۱۸۴۰</div>
+                        <h4 class="text-lg font-bold text-neon-cyan mb-2">ماشین مکانیکی بابیج</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-slate-400">قطعه اصلی:</strong> چرخ‌دنده و اهرم</li>
+                            <li><strong class="text-slate-400">اندازه:</strong> چند متر (سنگین)</li>
+                            <li><strong class="text-slate-400">ورودی:</strong> دستگیره مکانیکی / کارت</li>
+                            <li><strong class="text-slate-400">کاربری:</strong> جدول‌های ریاضی</li>
+                        </ul>
+                    </div>
+
+                    <!-- Era Card 2 -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-neon-green transition-all">
+                        <div class="text-xs font-mono text-slate-500 mb-1">۱۹۴۵ (ENIAC)</div>
+                        <h4 class="text-lg font-bold text-neon-green mb-2">نسل الکترونیکی اول</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-slate-400">قطعه اصلی:</strong> ۱۸,۰۰۰ لامپ خلاء</li>
+                            <li><strong class="text-slate-400">اندازه:</strong> به اندازه یک سالن بزرگ (۳۰ تن)</li>
+                            <li><strong class="text-slate-400">ورودی:</strong> کابل‌کشی و کارت پانچ</li>
+                            <li><strong class="text-slate-400">کاربری:</strong> محاسبات نظامی و علمی</li>
+                        </ul>
+                    </div>
+
+                    <!-- Era Card 3 -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-neon-amber transition-all">
+                        <div class="text-xs font-mono text-slate-500 mb-1">دهه ۱۹۸۰ (PC)</div>
+                        <h4 class="text-lg font-bold text-neon-amber mb-2">رایانه‌های شخصی و Mainframe</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-slate-400">قطعه اصلی:</strong> ریزپردازنده و ترانزیستور</li>
+                            <li><strong class="text-slate-400">اندازه:</strong> روی میز تحریر</li>
+                            <li><strong class="text-slate-400">ورودی:</strong> کیبورد و موس (GUI)</li>
+                            <li><strong class="text-slate-400">کاربری:</strong> خانگی، اداری، آموزشی</li>
+                        </ul>
+                    </div>
+
+                    <!-- Era Card 4 -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-neon-purple transition-all">
+                        <div class="text-xs font-mono text-slate-500 mb-1">اکنون (امروز)</div>
+                        <h4 class="text-lg font-bold text-neon-purple mb-2">گوشی هوشمند و هوش مصنوعی</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-slate-400">قطعه اصلی:</strong> میلیاردها ترانزیستور ۳ نانومتری</li>
+                            <li><strong class="text-slate-400">اندازه:</strong> داخل جیب (چند گرم)</li>
+                            <li><strong class="text-slate-400">ورودی:</strong> لمسی، صوت، تصویر</li>
+                            <li><strong class="text-slate-400">کاربری:</strong> هوشمند، شبکه، پردازش سنگین</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: CHEATSHEET & EXAM TIPS -->
+        <div id="view-cheatsheet" class="tab-content hidden space-y-6">
+            <div class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8">
+                <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-neon-green"></i>
+                    واژه‌نامه و خلاصه نکات امتحانی هنرستان
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-cyan font-mono block mb-1">Difference Engine</span>
+                        <h4 class="text-base font-bold text-white mb-1">ماشین تفاضلی</h4>
+                        <p class="text-xs text-slate-400">طراحی شده توسط چارلز بابیج در سال ۱۸۲۲ میلادی برای انجام محاسبات ریاضی به شکل مکانیکی.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-purple font-mono block mb-1">Ada Lovelace</span>
+                        <h4 class="text-base font-bold text-white mb-1">آدا لاولیس</h4>
+                        <p class="text-xs text-slate-400">اولین برنامه‌نویس تاریخ؛ او نوشتن الگوریتم‌ها برای ماشین بابیج را آغاز کرد.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-green font-mono block mb-1">ENIAC</span>
+                        <h4 class="text-base font-bold text-white mb-1">رایانه انیاک (۱۹۴۵)</h4>
+                        <p class="text-xs text-slate-400">اولین رایانه کاملاً الکترونیکی و عمومی جهان که از هزاران لامپ خلاء استفاده می‌کرد.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-amber font-mono block mb-1">Mainframe</span>
+                        <h4 class="text-base font-bold text-white mb-1">رایانه‌های بزرگ (مین‌فریم)</h4>
+                        <p class="text-xs text-slate-400">اولین نوع رایانه‌های وارد شده به ایران در دهه ۱۳۴۰، مورد استفاده در دانشگاه‌ها و مراکز آمار.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-rose font-mono block mb-1">GUI</span>
+                        <h4 class="text-base font-bold text-white mb-1">رابط گرافیکی کاربر</h4>
+                        <p class="text-xs text-slate-400">معرفی شده توسط اپل مکینتاش (۱۹۸۴) که کار با رایانه را از فرم متنی به محیط تصویری تبدیل کرد.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-neon-cyan font-mono block mb-1">WWW / Tim Berners-Lee</span>
+                        <h4 class="text-base font-bold text-white mb-1">شبکه جهانی وب</h4>
+                        <p class="text-xs text-slate-400">توسعه در دهه ۱۹۹۰ توسط تیم برنرزلی که کلید اتصال جهانی رایانه‌ها بود.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section (Gamified Interactive Hacker Terminal) -->
+        <section id="quiz-section" class="relative bg-gradient-to-br from-cardbg via-slate-900 to-black border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/5 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-slate-800 pb-6 mb-8 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-neon-green mb-1">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span>چالش سنجش دانش هنرجو v1.0</span>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">آزمون تعاملی: مدال هکر تاریخ‌نگار</h3>
+                </div>
+
+                <!-- Live Score Badge -->
+                <div class="flex items-center gap-4 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-2xl">
+                    <div class="text-center">
+                        <span class="text-[10px] text-slate-400 block">امتیاز شما</span>
+                        <span id="scoreDisplay" class="text-xl font-mono font-black text-neon-cyan">0 / 5</span>
+                    </div>
+                    <div class="h-8 w-[1px] bg-slate-800"></div>
+                    <div class="text-center">
+                        <span class="text-[10px] text-slate-400 block">سطح شما</span>
+                        <span id="rankBadge" class="text-xs font-bold text-neon-amber">هنرجوی تازه‌کار</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Question 1 -->
+                <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="1">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-950 text-neon-cyan text-xs flex items-center justify-center font-mono">۱</span>
+                        اولین برنامه‌نویس تاریخ که الگوریتم‌هایی برای ماشین بابیج نوشت چه کسی بود؟
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="checkAnswer(this, 1, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) آلن تورینگ</button>
+                        <button onclick="checkAnswer(this, 1, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) آدا لاولیس</button>
+                        <button onclick="checkAnswer(this, 1, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) تیم برنرزلی</button>
+                        <button onclick="checkAnswer(this, 1, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) چارلز بابیج</button>
+                    </div>
+                    <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="2">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-purple-950 text-neon-purple text-xs flex items-center justify-center font-mono">۲</span>
+                        نخستین رایانه‌هایی که در دهه ۱۳۴۰ شمسی وارد ایران شدند از چه نوعی بودند؟
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="checkAnswer(this, 2, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) رایانه‌های شخصی (PC)</button>
+                        <button onclick="checkAnswer(this, 2, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) لپ‌تاپ‌های هوشمند</button>
+                        <button onclick="checkAnswer(this, 2, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) رایانه‌های بزرگ (Mainframe)</button>
+                        <button onclick="checkAnswer(this, 2, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) ابررایانه‌های کوانتومی</button>
+                    </div>
+                    <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="0">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-950 text-neon-green text-xs flex items-center justify-center font-mono">۳</span>
+                        کدام رایانه در سال ۱۹۴۵ میلادی به عنوان اولین رایانه کاملاً الکترونیکی عمومی معرفی شد؟
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="checkAnswer(this, 3, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) ENIAC</button>
+                        <button onclick="checkAnswer(this, 3, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) Apple Macintosh</button>
+                        <button onclick="checkAnswer(this, 3, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) IBM PC 1981</button>
+                        <button onclick="checkAnswer(this, 3, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) ماشین تفاضلی بابیج</button>
+                    </div>
+                    <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="3">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-amber-950 text-neon-amber text-xs flex items-center justify-center font-mono">۴</span>
+                        در کدام دهه شمسی، رایانه‌های شخصی (PC) به‌طور گسترده وارد مدارس، هنرستان‌ها و منازل ایران شدند؟
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="checkAnswer(this, 4, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) دهه ۱۳۴۰</button>
+                        <button onclick="checkAnswer(this, 4, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) دهه ۱۳۵۰</button>
+                        <button onclick="checkAnswer(this, 4, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) دهه ۱۳۶۰</button>
+                        <button onclick="checkAnswer(this, 4, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) دهه ۱۳۷۰</button>
+                    </div>
+                    <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="1">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-rose-950 text-neon-rose text-xs flex items-center justify-center font-mono">۵</span>
+                        تحول بزرگ اپل مکینتاش در سال ۱۹۸۴ چه بود که کار با رایانه را ساده کرد؟
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="checkAnswer(this, 5, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) حذف کامل برق و کار با باتری شمسی</button>
+                        <button onclick="checkAnswer(this, 5, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) معرفی رابط گرافیکی (GUI) جذاب و موس</button>
+                        <button onclick="checkAnswer(this, 5, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) اختراع شبکه جهانی وب</button>
+                        <button onclick="checkAnswer(this, 5, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) استفاده از چرخ‌دنده‌های مکانیکی</button>
+                    </div>
+                    <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Result Modal / Banner -->
+            <div id="quizResult" class="hidden mt-6 bg-slate-900 border border-neon-cyan/50 p-6 rounded-2xl text-center space-y-3">
+                <div class="text-3xl text-neon-cyan"><i class="fa-solid fa-trophy"></i></div>
+                <h4 class="text-xl font-bold text-white" id="finalTitle">نتیجه نهایی</h4>
+                <p class="text-xs text-slate-300" id="finalDesc"></p>
+                <button onclick="resetQuiz()" class="px-5 py-2 bg-neon-cyan text-black font-bold text-xs rounded-xl hover:bg-cyan-400 transition-all">
+                    تلاش مجدد و ثبت رکورد جدید
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 bg-darkbg text-center text-xs text-slate-500">
+        <p>طراحی شده ویژه هنرجویان رشته شبکه و نرم‌افزار رایانه - پایه دهم هنرستان‌های کشور | ۱۴۰۵ - ۱۴۰۳</p>
+    </footer>
+
+    <script>
+        // Web Audio API Sound Effects Synthesizer (No external audio files needed)
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(freq = 440, type = 'sine', duration = 0.1) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio not supported or waiting for user gesture.");
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-neon-cyan';
+                text.innerText = 'افکت صوتی: فعال';
+                playSound(600, 'sine', 0.1);
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                text.innerText = 'افکت صوتی: غیرفعال';
+            }
+        }
+
+        function switchTab(tabId) {
+            playSound(500, 'triangle', 0.08);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-gradient-to-r', 'from-neon-cyan', 'to-blue-600', 'text-black', 'shadow-neon-cyan');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const activeContent = document.getElementById(`view-${tabId}`);
+            if (activeContent) activeContent.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.add('active', 'bg-gradient-to-r', 'from-neon-cyan', 'to-blue-600', 'text-black', 'shadow-neon-cyan');
+            }
+        }
+
+        let currentEra = 'all';
+
+        function filterEra(era) {
+            playSound(520, 'sine', 0.05);
+            currentEra = era;
+            document.querySelectorAll('.era-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-neon-cyan', 'text-black', 'font-bold');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            event.target.classList.remove('bg-slate-800', 'text-slate-300');
+            event.target.classList.add('bg-neon-cyan', 'text-black', 'font-bold');
+            filterContent();
+        }
+
+        function filterContent() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const items = document.querySelectorAll('.timeline-item');
+
+            items.forEach(item => {
+                const itemEra = item.getAttribute('data-era');
+                const itemSearch = item.getAttribute('data-search').toLowerCase();
+
+                const matchesEra = (currentEra === 'all' || itemEra === currentEra);
+                const matchesSearch = (!query || itemSearch.includes(query));
+
+                if (matchesEra && matchesSearch) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        let userScore = 0;
+        let answeredCount = 0;
+        const totalQuestions = 5;
+        const userAnswers = {};
+
+        function checkAnswer(btn, questionNum, choiceIdx) {
+            if (userAnswers[questionNum] !== undefined) return; // Prevent re-answering
+
+            userAnswers[questionNum] = choiceIdx;
+            answeredCount++;
+
+            const card = btn.closest('.quiz-card');
+            const correctIdx = parseInt(card.getAttribute('data-correct'));
+            const buttons = card.querySelectorAll('.opt-btn');
+            const feedback = card.querySelector('.quiz-feedback');
+
+            // Disable all buttons for this question
+            buttons.forEach(b => b.classList.add('pointer-events-none', 'opacity-60'));
+
+            if (choiceIdx === correctIdx) {
+                userScore++;
+                playSound(880, 'sine', 0.15); // High beep for correct
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('bg-emerald-950', 'border', 'border-neon-green', 'text-neon-green');
+                feedback.classList.remove('hidden');
+                feedback.classList.add('bg-emerald-950/80', 'text-neon-green', 'border', 'border-neon-green/40');
+                feedback.innerHTML = '<i class="fa-solid fa-check ml-1"></i> پاسخ صحیح است! آفرین هنرجوی خفن.';
+            } else {
+                playSound(220, 'sawtooth', 0.2); // Low buzz for wrong
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('bg-rose-950', 'border', 'border-neon-rose', 'text-neon-rose');
+                
+                // Highlight correct one
+                buttons[correctIdx].classList.remove('bg-slate-800', 'opacity-60');
+                buttons[correctIdx].classList.add('bg-emerald-950', 'text-neon-green', 'border', 'border-neon-green/40');
+
+                feedback.classList.remove('hidden');
+                feedback.classList.add('bg-rose-950/80', 'text-neon-rose', 'border', 'border-neon-rose/40');
+                feedback.innerHTML = '<i class="fa-solid fa-xmark ml-1"></i> پاسخ نادرست! گزینه سبز جواب درست است.';
+            }
+
+            updateScoreUI();
+
+            if (answeredCount === totalQuestions) {
+                showFinalResult();
+            }
+        }
+
+        function updateScoreUI() {
+            document.getElementById('scoreDisplay').innerText = `${userScore} / ${totalQuestions}`;
+            const badge = document.getElementById('rankBadge');
+
+            if (userScore === 5) {
+                badge.innerText = 'استاد سخت‌افزار و شبکه 🏆';
+                badge.className = 'text-xs font-bold text-neon-green glow-text-cyan';
+            } else if (userScore >= 3) {
+                badge.innerText = 'برنامه‌نویس حرفه‌ای ⚡';
+                badge.className = 'text-xs font-bold text-neon-cyan';
+            } else {
+                badge.innerText = 'هنرجوی تازه‌کار 💻';
+                badge.className = 'text-xs font-bold text-neon-amber';
+            }
+        }
+
+        function showFinalResult() {
+            playSound(700, 'sine', 0.3);
+            const resultBox = document.getElementById('quizResult');
+            const title = document.getElementById('finalTitle');
+            const desc = document.getElementById('finalDesc');
+
+            resultBox.classList.remove('hidden');
+            if (userScore === 5) {
+                title.innerText = 'تبریک! مدال طلایی هکر تاریخ‌نگار به شما تعلق گرفت 🥇';
+                desc.innerText = 'تسلط کامل شما بر تاریخچه رایانش جهانی و ایران تحسین‌برانگیز است.';
+            } else if (userScore >= 3) {
+                title.innerText = 'عملکرد عالی! مدال نقره‌ای تحلیل‌گر سیستم 🥈';
+                desc.innerText = 'شما اکثر مفاهیم کلیدی را به خوبی یاد گرفته‌اید.';
+            } else {
+                title.innerText = 'نیاز به مرور دوباره کارت‌ها 📚';
+                desc.innerText = 'توصیه می‌کنیم یک بار دیگر تایم‌لاین بالا را مطالعه و آزمون را مجدداً امتحان کنی.';
+            }
+        }
+
+        function resetQuiz() {
+            playSound(400, 'sine', 0.1);
+            userScore = 0;
+            answeredCount = 0;
+            for (let member in userAnswers) delete userAnswers[member];
+
+            document.getElementById('quizResult').classList.add('hidden');
+            document.querySelectorAll('.quiz-card').forEach(card => {
+                const buttons = card.querySelectorAll('.opt-btn');
+                const feedback = card.querySelector('.quiz-feedback');
+                feedback.classList.add('hidden');
+                feedback.className = 'quiz-feedback hidden text-xs p-2.5 rounded-lg';
+
+                buttons.forEach(b => {
+                    b.className = 'opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all';
+                });
+            });
+
+            updateScoreUI();
+        }
+    </script>
+</body>
+</html>

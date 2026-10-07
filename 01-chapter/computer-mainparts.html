@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه معماری رایانه و دستگاه‌های ورودی | پایه دهم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            purple: '#ab00ff',
+                            green: '#00ff66',
+                            amber: '#ffb700',
+                            rose: '#ff0055',
+                            blue: '#0066ff'
+                        },
+                        darkbg: '#090d16',
+                        cardbg: '#111726',
+                        borderbg: '#1e293b'
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(0, 243, 255, 0.4)',
+                        'neon-purple': '0 0 20px rgba(171, 0, 255, 0.4)',
+                        'neon-green': '0 0 20px rgba(0, 255, 102, 0.4)',
+                        'neon-amber': '0 0 20px rgba(255, 183, 0, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #090d16;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+        .tech-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+        .bus-pulse {
+            stroke-dasharray: 8;
+            animation: dash 1s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+        .glow-cyan-text {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+        }
+        .glow-purple-text {
+            text-shadow: 0 0 10px rgba(171, 0, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="tech-grid min-h-screen flex flex-col selection:bg-neon-cyan selection:text-black">
+
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-darkbg/85 border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-neon-cyan via-blue-600 to-neon-purple flex items-center justify-center text-black font-extrabold text-xl shadow-neon-cyan">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-black tracking-wide text-white flex items-center gap-2">
+                        آزما‌یشگاه معماری و ورودی‌های رایانه
+                        <span class="text-[10px] bg-cyan-950 text-neon-cyan border border-neon-cyan/40 px-2 py-0.5 rounded-full font-mono">پایه دهم</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">شبکه و نرم‌افزار رایانه | پودمان سخت‌افزار</p>
+                </div>
+            </div>
+
+            <!-- Audio & Action controls -->
+            <div class="flex items-center gap-3">
+                <button id="soundToggleBtn" onclick="toggleAudio()" class="px-3 py-2 bg-slate-900 border border-slate-700 hover:border-neon-cyan rounded-xl text-xs font-semibold text-slate-300 flex items-center gap-2 transition-all">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-neon-cyan"></i>
+                    <span id="soundText" class="hidden sm:inline">افکت صوتی: فعال</span>
+                </button>
+                <a href="#quiz-section" class="px-4 py-2 bg-gradient-to-r from-neon-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold rounded-xl text-xs transition-all shadow-neon-cyan flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-sm"></i>
+                    <span>چالش سخت‌افزار</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- Hero Intro Section -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-cardbg to-black border border-slate-800 p-6 sm:p-10 shadow-2xl">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-neon-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-neon-purple/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-neon-cyan text-xs font-mono">
+                        <span class="w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></span>
+                        شبیه‌ساز و نمای گرافیکی اجزای سیستم
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-relaxed">
+                        سه بخش اصلی رایانه: <br class="hidden sm:inline"/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-blue-400 to-neon-purple glow-cyan-text">ورودی، پردازش و خروجی + حافظه</span>
+                    </h2>
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        سلام هنرجوی عزیز! در هر سیستم رایانه‌ای، داده‌ها از طریق **دستگاه‌های ورودی** وارد شده، در **واحد پردازش** با همکاری مستقیم **حافظه** تجزیه و تحلیل می‌شوند و در نهایت به **دستگاه‌های خروجی** ارسال می‌گردند. در این کارگاه تعاملی، نحوه جریان داده‌ها و ابزارهای ورودی مدرن را کاوش کن!
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="scrollToSection('architecture-section')" class="px-4 py-2.5 bg-neon-cyan text-black font-extrabold rounded-xl text-xs hover:bg-cyan-300 transition-all shadow-neon-cyan flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>مشاهده نمودار تعاملی جریان داده</span>
+                        </button>
+                        <button onclick="scrollToSection('pen-studio')" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-neon-purple border border-neon-purple/40 font-bold rounded-xl text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-pen-nib"></i>
+                            <span>تست قلم نوری و کالیگرافی</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Floating Quick Stats Widget -->
+                <div class="lg:col-span-4 bg-slate-900/90 border border-slate-700/80 rounded-2xl p-5 space-y-3 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-mono text-neon-green"><i class="fa-solid fa-circle-check ml-1"></i> خلاصه معماری در یک نگاه</span>
+                        <span class="text-[10px] text-slate-500">پایه دهم</span>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center bg-slate-800/60 p-2 rounded-lg">
+                            <span class="text-slate-400">بخش ورودی (Input):</span>
+                            <span class="text-neon-cyan font-bold">ورود متون، تصاویر، صدا، فیلم</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800/60 p-2 rounded-lg">
+                            <span class="text-slate-400">پردازش (CPU) + حافظه:</span>
+                            <span class="text-neon-purple font-bold">محاسبات و ذخیره‌سازی ارتباط مستقیم</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800/60 p-2 rounded-lg">
+                            <span class="text-slate-400">بخش خروجی (Output):</span>
+                            <span class="text-neon-green font-bold">نمایش و ارائه نتایج</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-4 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('arch')" id="tab-arch" class="tab-btn active px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-neon-cyan to-blue-600 text-black shadow-neon-cyan">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>۱. نمودار گرافیکی معماری اصلی</span>
+            </button>
+            <button onclick="switchTab('devices')" id="tab-devices" class="tab-btn px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-keyboard"></i>
+                <span>۲. ویترین دستگاه‌های ورودی</span>
+            </button>
+            <button onclick="switchTab('pen')" id="tab-pen" class="tab-btn px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-pen-ruler"></i>
+                <span>۳. کارگاه تعاملی قلم نوری</span>
+            </button>
+            <button onclick="switchTab('exam')" id="tab-exam" class="tab-btn px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                <i class="fa-solid fa-book-open"></i>
+                <span>۴. نکات کلیدی و آزمون</span>
+            </button>
+        </div>
+
+        <section id="view-arch" class="tab-content space-y-8">
+            <div class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                            <i class="fa-solid fa-network-wired text-neon-cyan"></i>
+                            نمای گرافیکی ارتباط بخش‌های اصلی رایانه (شکل ۱ کتاب)
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            روی هر بخش کلیک کنید تا عملکرد آن را ببینید یا دکمه «ارسال داده آزمایشی» را بزنید تا حرکت داده‌ها را شبیه‌سازی کنید.
+                        </p>
+                    </div>
+                    <button onclick="simulateDataFlow()" class="px-5 py-2.5 bg-gradient-to-r from-neon-green to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-extrabold rounded-xl text-xs shadow-neon-green transition-all flex items-center gap-2 self-start sm:self-auto">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ارسال داده آزمایشی در گذرگاه</span>
+                    </button>
+                </div>
+
+                <!-- Interactive Architecture Circuit Board Simulation -->
+                <div class="relative bg-slate-950/90 border border-slate-800 rounded-2xl p-6 overflow-hidden">
+                    
+                    <!-- SVG Bus Lines Connections -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#00f3ff" />
+                                <stop offset="100%" stop-color="#ab00ff" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Bus Line: Input to CPU -->
+                        <line x1="20%" y1="50%" x2="45%" y2="50%" stroke="#00f3ff" stroke-width="3" class="bus-line" />
+                        <!-- Bus Line: CPU to Memory (Bi-directional) -->
+                        <line x1="50%" y1="40%" x2="50%" y2="22%" stroke="#ab00ff" stroke-width="3" stroke-dasharray="5 5" />
+                        <!-- Bus Line: CPU to Output -->
+                        <line x1="55%" y1="50%" x2="80%" y2="50%" stroke="#00ff66" stroke-width="3" class="bus-line" />
+                    </svg>
+
+                    <!-- Interactive Diagram Nodes -->
+                    <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center my-8">
+                        
+                        <!-- Input Block -->
+                        <div onclick="selectArchBlock('input')" id="block-input" class="arch-block cursor-pointer bg-slate-900 border-2 border-neon-cyan hover:shadow-neon-cyan p-5 rounded-2xl transition-all text-center space-y-3 group">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-cyan-950 text-neon-cyan flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-white">۱. بخش ورودی (Input)</h4>
+                            <p class="text-xs text-slate-400">ورود داده‌ها (متن، تصویر، صدا، فیلم و...)</p>
+                            <span class="inline-block text-[10px] font-mono bg-cyan-950/80 text-neon-cyan px-2 py-0.5 rounded-md border border-neon-cyan/30">صفحه کلید، ماوس، اسکنر، قلم نوری...</span>
+                        </div>
+
+                        <!-- Processing & Memory Core -->
+                        <div class="space-y-6">
+                            <!-- Memory (Indispensable) Top Card -->
+                            <div onclick="selectArchBlock('memory')" id="block-memory" class="arch-block cursor-pointer bg-slate-900 border-2 border-neon-purple hover:shadow-neon-purple p-4 rounded-2xl transition-all text-center space-y-2 group">
+                                <div class="flex items-center justify-center gap-2 text-neon-purple font-bold text-sm">
+                                    <i class="fa-solid fa-memory"></i>
+                                    <span>حافظه (Memory)</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400">جزء جداناپذیر رایانه | ارتباط مستقیم با واحد پردازش</p>
+                            </div>
+
+                            <!-- Processing Core (CPU) -->
+                            <div onclick="selectArchBlock('cpu')" id="block-cpu" class="arch-block cursor-pointer bg-slate-900 border-2 border-blue-500 hover:shadow-neon-cyan p-5 rounded-2xl transition-all text-center space-y-3 group">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-950 text-neon-cyan flex items-center justify-center text-xl font-bold group-hover:rotate-12 transition-transform">
+                                    <i class="fa-solid fa-microchip"></i>
+                                </div>
+                                <h4 class="text-base font-bold text-white">۲. واحد پردازش (CPU)</h4>
+                                <p class="text-xs text-slate-400">پردازش داده‌ها، محاسبات ریاضی و منطقی</p>
+                                <span class="inline-block text-[10px] font-mono bg-blue-950/80 text-blue-300 px-2 py-0.5 rounded-md border border-blue-500/30">پردازش مرکزی داده‌ها</span>
+                            </div>
+                        </div>
+
+                        <!-- Output Block -->
+                        <div onclick="selectArchBlock('output')" id="block-output" class="arch-block cursor-pointer bg-slate-900 border-2 border-neon-green hover:shadow-neon-green p-5 rounded-2xl transition-all text-center space-y-3 group">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-950 text-neon-green flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-desktop"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-white">۳. بخش خروجی (Output)</h4>
+                            <p class="text-xs text-slate-400">ارائه نتایج پردازش شده به کاربر</p>
+                            <span class="inline-block text-[10px] font-mono bg-emerald-950/80 text-neon-green px-2 py-0.5 rounded-md border border-neon-green/30">مانیتور، پرینتر، اسپیکر...</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Live Packet Pulse Status Bar -->
+                    <div id="flowStatus" class="mt-4 bg-slate-900/90 border border-slate-800 p-3 rounded-xl text-center text-xs font-mono text-neon-cyan hidden">
+                        <i class="fa-solid fa-spinner animate-spin ml-2"></i>
+                        <span>در حال ارسال داده از دستگاه ورودی به پردازشگر و حافظه...</span>
+                    </div>
+                </div>
+
+                <!-- Detailed Explanation Modal Box -->
+                <div id="archDetailBox" class="bg-slate-900 border border-slate-700 rounded-2xl p-5 space-y-2">
+                    <h4 id="archDetailTitle" class="text-base font-bold text-neon-cyan flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i>
+                        بخش ورودی (Input Unit)
+                    </h4>
+                    <p id="archDetailDesc" class="text-xs text-slate-300 leading-relaxed">
+                        دستگاه‌های ورودی ابزارهایی هستند که کاربران به وسیله آن‌ها داده‌ها (متن، تصاویر، صدا، فیلم یا هر داده دیگری) را به رایانه وارد می‌کنند. داده‌های ورودی جهت پردازش مستقیم یا ذخیره در حافظه ارسال می‌شوند.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-devices" class="tab-content hidden space-y-8">
+            <div class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                        <i class="fa-solid fa-keyboard text-neon-amber"></i>
+                        ویترین جامع دستگاه‌های ورودی در صنعت رایانه
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        آشنایی با انواع ابزارهای ورود داده از کیبورد تا اسکنرهای سه بعدی و تجهیزات پیشرفته گیمینگ.
+                    </p>
+                </div>
+
+                <!-- Category Filter Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterDevice('all')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-neon-amber text-black font-bold text-xs">همه دستگاه‌ها</button>
+                    <button onclick="filterDevice('standard')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">رایج (ماوس و کیبورد)</button>
+                    <button onclick="filterDevice('scanner')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">اسکنرها (۲D و ۳D)</button>
+                    <button onclick="filterDevice('media')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">تولید محتوا (دوربین و میکروفون)</button>
+                    <button onclick="filterDevice('gaming')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">صنعت بازی (گیم‌پد و شبیه‌ساز)</button>
+                    <button onclick="filterDevice('pen')" class="dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs">قلم نوری (دیجیتال)</button>
+                </div>
+
+                <!-- Device Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    
+                    <!-- Mouse & Keyboard -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-cyan rounded-2xl p-5 space-y-3 transition-all" data-cat="standard">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-cyan-950 text-neon-cyan flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-keyboard"></i></span>
+                            <span class="text-[10px] font-mono text-slate-500 bg-slate-800 px-2 py-1 rounded-md">سیمی / بیسیم</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">صفحه کلید و ماوس</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            معروف‌ترین و اصلی‌ترین دستگاه‌های ورودی که سال‌هاست بدون تغییر عمده‌ای به صورت سیمی یا بیسیم جهت ورود متون و دستورات استفاده می‌شوند.
+                        </p>
+                    </div>
+
+                    <!-- 2D Scanner -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-cyan rounded-2xl p-5 space-y-3 transition-all" data-cat="scanner">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-cyan-950 text-neon-cyan flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-print"></i></span>
+                            <span class="text-[10px] font-mono text-slate-500 bg-slate-800 px-2 py-1 rounded-md">اسناد و تصاویر</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">پویشگر (اسکنر) دو بعدی</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            جهت اسکن و دیجیتالی کردن اسناد کاغذی، متون و تصاویر فیزیکی به داده‌های دیجیتال تصویری در رایانه.
+                        </p>
+                    </div>
+
+                    <!-- 3D Scanner -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-purple rounded-2xl p-5 space-y-3 transition-all" data-cat="scanner">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-purple-950 text-neon-purple flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-cube"></i></span>
+                            <span class="text-[10px] font-mono text-neon-purple bg-purple-950/60 px-2 py-1 rounded-md border border-neon-purple/30">مدل‌سازی احجام</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">اسکنر سه بعدی (3D Scanner)</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            امروزه برای مدل‌سازی احجام مختلف فیزیکی، قطعات صنعتی و مجسمه‌ها در نرم‌افزارهای سه بعدی کاربرد فراوان دارند.
+                        </p>
+                    </div>
+
+                    <!-- Microphone & Webcam -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-green rounded-2xl p-5 space-y-3 transition-all" data-cat="media">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-950 text-neon-green flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-microphone-lines"></i></span>
+                            <span class="text-[10px] font-mono text-slate-500 bg-slate-800 px-2 py-1 rounded-md">تولید محتوا</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">میکروفون و دوربین (وب‌کم)</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            دستگاه‌های ورودی صدا و تصویر که کاربرد بسیار زیادی در ضبط دوره‌های آموزشی، تولید محتوای الکترونیک و ارتباطات تصویری دارند.
+                        </p>
+                    </div>
+
+                    <!-- Gaming Accessories -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-amber rounded-2xl p-5 space-y-3 transition-all" data-cat="gaming">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-amber-950 text-neon-amber flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-gamepad"></i></span>
+                            <span class="text-[10px] font-mono text-neon-amber bg-amber-950/60 px-2 py-1 rounded-md border border-neon-amber/30">صنعت بازی</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">گیم‌پد، شبیه‌ساز و اسکنر حرکتی</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            انواع دسته بازی، فرمان و پدال شبیه‌ساز رانندگی و اسکنرهای تشخیص حرکت گیمر که داده‌های حرکتی فیزیکی را به ورودی بازی تبدیل می‌کنند.
+                        </p>
+                    </div>
+
+                    <!-- Light Pen / Graphics Tablet -->
+                    <div class="device-card bg-slate-900 border border-slate-800 hover:border-neon-rose rounded-2xl p-5 space-y-3 transition-all" data-cat="pen">
+                        <div class="flex items-center justify-between">
+                            <span class="w-10 h-10 rounded-xl bg-rose-950 text-neon-rose flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-pen-nib"></i></span>
+                            <span class="text-[10px] font-mono text-neon-rose bg-rose-950/60 px-2 py-1 rounded-md border border-rose-950">گرافیک دیجیتال</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">قلم نوری و پد مخصوص</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            دستگاهی با وزن و ابعاد قلم واقعی روی پد مخصوص؛ دارای دکمه‌های پاک‌کن و کلیک راست جهت رسم دقیق طرح‌های گرافیکی.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="view-pen" class="tab-content hidden space-y-8">
+            <div id="pen-studio" class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs text-neon-purple font-mono mb-1">
+                        <i class="fa-solid fa-pen-fancy"></i>
+                        <span>کارگاه عملی پایه دهم</span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                        استودیو تعاملی قلم نوری و ۶ کاربرد اصلی آن
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        با موس یا لمس روی بوم دیجیتال زیر نقاشی یا کالیگرافی کنید و حالت‌های مختلف کاربرد قلم نوری را آزمایش کنید!
+                    </p>
+                </div>
+
+                <!-- 6 Light Pen Applications Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <button onclick="setPenPreset('graphic')" class="pen-preset-btn active p-3 bg-slate-900 border border-neon-purple rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-palette text-neon-purple text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">طراحی گرافیکی</span>
+                        <span class="text-[9px] text-slate-400">لوگو و شخصیت</span>
+                    </button>
+                    <button onclick="setPenPreset('edit')" class="pen-preset-btn p-3 bg-slate-900 border border-slate-800 rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-wand-magic-sparkles text-neon-cyan text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">ویرایش تصاویر</span>
+                        <span class="text-[9px] text-slate-400">اصلاح فوتومونتاژ</span>
+                    </button>
+                    <button onclick="setPenPreset('anim')" class="pen-preset-btn p-3 bg-slate-900 border border-slate-800 rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-film text-neon-green text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">طراحی انیمیشن</span>
+                        <span class="text-[9px] text-slate-400">۲ بعدی و ۳ بعدی</span>
+                    </button>
+                    <button onclick="setPenPreset('calligraphy')" class="pen-preset-btn p-3 bg-slate-900 border border-slate-800 rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-pen-nib text-neon-amber text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">کالیگرافی</span>
+                        <span class="text-[9px] text-slate-400">خوشنویسی دیجیتال</span>
+                    </button>
+                    <button onclick="setPenPreset('arch')" class="pen-preset-btn p-3 bg-slate-900 border border-slate-800 rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-compass-drafting text-neon-rose text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">طراحی معماری</span>
+                        <span class="text-[9px] text-slate-400">نقشه و پلان</span>
+                    </button>
+                    <button onclick="setPenPreset('3d')" class="pen-preset-btn p-3 bg-slate-900 border border-slate-800 rounded-xl text-center hover:border-neon-cyan transition-all">
+                        <i class="fa-solid fa-cubes text-blue-400 text-lg block mb-1"></i>
+                        <span class="text-xs font-bold text-white block">مدل‌سازی ۳D</span>
+                        <span class="text-[9px] text-slate-400">حجم‌سازی دیجیتال</span>
+                    </button>
+                </div>
+
+                <!-- Interactive Drawing Tablet Workspace -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-4">
+                    
+                    <!-- Toolbar Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-slate-400">رنگ قلم:</span>
+                            <input type="color" id="penColorPicker" value="#00f3ff" onchange="updatePenColor(this.value)" class="w-8 h-8 rounded-lg bg-transparent cursor-pointer border-none">
+                            
+                            <span class="text-xs text-slate-400 mr-2">ضخامت:</span>
+                            <input type="range" id="penWidthSlider" min="2" max="24" value="6" oninput="updatePenWidth(this.value)" class="w-24 accent-neon-cyan">
+                            <span id="penWidthLabel" class="text-xs font-mono text-neon-cyan">6px</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button onclick="setTool('pen')" id="toolPenBtn" class="px-3 py-1.5 bg-neon-cyan text-black font-bold text-xs rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-pen"></i> قلم
+                            </button>
+                            <button onclick="setTool('eraser')" id="toolEraserBtn" class="px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-eraser"></i> پاک‌کن
+                            </button>
+                            <button onclick="clearCanvas()" class="px-3 py-1.5 bg-rose-950 text-neon-rose border border-rose-900/50 hover:bg-rose-900 text-xs font-bold rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-trash"></i> پاکسازی بوم
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- HTML5 Canvas Element -->
+                    <div class="relative w-full h-80 bg-slate-900/80 rounded-xl overflow-hidden border border-slate-800 cursor-crosshair">
+                        <canvas id="penCanvas" class="w-full h-full block"></canvas>
+                        <div id="canvasOverlayText" class="absolute bottom-3 right-3 pointer-events-none text-[11px] font-mono text-slate-500 bg-slate-950/80 px-2.5 py-1 rounded-md border border-slate-800">
+                            حالت فعال: <span id="currentPresetName" class="text-neon-cyan font-bold">طراحی گرافیکی</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-exam" class="tab-content hidden space-y-8">
+            <!-- Exam Flashcards Summary -->
+            <div class="bg-cardbg border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-neon-green"></i>
+                    نکات طلایی و امتحانی هنرستان (پودمان ورودی)
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-1">
+                        <strong class="text-neon-cyan block font-bold">سه بخش اصلی رایانه:</strong>
+                        <p class="text-slate-300">۱. ورودی ۲. پردازش ۳. خروجی (به همراه حافظه که ارتباط مستقیم با واحد پردازش دارد).</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-1">
+                        <strong class="text-neon-purple block font-bold">تفاوت اسکنر دو بعدی و سه بعدی:</strong>
+                        <p class="text-slate-300">اسکنر معمولی اسناد و تصاویر کاغذی را وارد می‌کند؛ اسکنر ۳D برای مدل‌سازی احجام فیزیکی به‌کار می‌رود.</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-1">
+                        <strong class="text-neon-amber block font-bold">قلم نوری (Graphics Tablet):</strong>
+                        <p class="text-slate-300">دارای پد مخصوص، دکمه‌های کلیک راست و پاک‌کن؛ برای کالیگرافی، انیمیشن، معماری و طراحی مدل‌ها.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <section id="quiz-section" class="relative bg-gradient-to-br from-cardbg via-slate-900 to-black border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-slate-800 pb-6 mb-8 gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-mono text-neon-green mb-1">
+                            <i class="fa-solid fa-terminal"></i>
+                            <span>چالش سنجش دانش پایه دهم v2.0</span>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-white">آزمون تعاملی: مدال هکر سخت‌افزار</h3>
+                    </div>
+
+                    <div class="flex items-center gap-4 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-2xl">
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-400 block">امتیاز شما</span>
+                            <span id="quizScore" class="text-xl font-mono font-black text-neon-cyan">0 / 5</span>
+                        </div>
+                        <div class="h-8 w-[1px] bg-slate-800"></div>
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-400 block">رتبه</span>
+                            <span id="quizRank" class="text-xs font-bold text-neon-amber">هنرجوی مبتدی</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions List Container -->
+                <div id="quizQuestionsContainer" class="space-y-6">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="1">
+                        <p class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-cyan-950 text-neon-cyan text-xs flex items-center justify-center font-mono">۱</span>
+                            کدام‌یک از اجزای رایانه ارتباط مستقیم با واحد پردازش دارد؟
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button onclick="answerQuiz(this, 1, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) اسکنر ۳D</button>
+                            <button onclick="answerQuiz(this, 1, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) حافظه (Memory)</button>
+                            <button onclick="answerQuiz(this, 1, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) پرینتر</button>
+                            <button onclick="answerQuiz(this, 1, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) گیم‌پد</button>
+                        </div>
+                        <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="2">
+                        <p class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-purple-950 text-neon-purple text-xs flex items-center justify-center font-mono">۲</span>
+                            دستگاهی که برای مدل‌سازی احجام مختلف فیزیکی استفاده می‌شود چیست؟
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button onclick="answerQuiz(this, 2, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) موس اپتیکال</button>
+                            <button onclick="answerQuiz(this, 2, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) پویشگر ۲ بعدی معمولی</button>
+                            <button onclick="answerQuiz(this, 2, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) اسکنر سه بعدی (3D Scanner)</button>
+                            <button onclick="answerQuiz(this, 2, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) وب‌کم</button>
+                        </div>
+                        <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="0">
+                        <p class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-emerald-950 text-neon-green text-xs flex items-center justify-center font-mono">۳</span>
+                            کدام‌یک از موارد زیر در دسته دستگاه‌های ورودی قرار می‌گیرند؟
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button onclick="answerQuiz(this, 3, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) گیم‌پد، قلم نوری، میکروفون</button>
+                            <button onclick="answerQuiz(this, 3, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) مانیتور، پرینتر، اسپیکر</button>
+                            <button onclick="answerQuiz(this, 3, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) پردازنده مرکزی (CPU)، رم</button>
+                            <button onclick="answerQuiz(this, 3, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) کارت گرافیک و مانیتور</button>
+                        </div>
+                        <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="3">
+                        <p class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-amber-950 text-neon-amber text-xs flex items-center justify-center font-mono">۴</span>
+                            کدام مورد از کاربردهای قلم نوری **نیست**؟
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button onclick="answerQuiz(this, 4, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) خوشنویسی و کالیگرافی دیجیتال</button>
+                            <button onclick="answerQuiz(this, 4, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) طراحی انیمیشن ۲ بعدی و ۳ بعدی</button>
+                            <button onclick="answerQuiz(this, 4, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) طراحی نقشه و پلان معماری</button>
+                            <button onclick="answerQuiz(this, 4, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) اسکن فیزیکی برگه کاغذ</button>
+                        </div>
+                        <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-card bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3" data-correct="1">
+                        <p class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-rose-950 text-neon-rose text-xs flex items-center justify-center font-mono">۵</span>
+                            قلم نوری هنگام کار روی پد مخصوص چه نقش‌هایی را می‌تواند ایفا کند؟
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button onclick="answerQuiz(this, 5, 0)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">الف) فقط رسم خطوط</button>
+                            <button onclick="answerQuiz(this, 5, 1)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ب) پاک‌کن و کلیک راست ماوس</button>
+                            <button onclick="answerQuiz(this, 5, 2)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">ج) چاپ تصاویر</button>
+                            <button onclick="answerQuiz(this, 5, 3)" class="opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all">د) ضبط صدای کاربر</button>
+                        </div>
+                        <div class="quiz-feedback hidden text-xs p-2.5 rounded-lg"></div>
+                    </div>
+
+                </div>
+
+                <!-- Final Results -->
+                <div id="quizResultBox" class="hidden mt-6 bg-slate-900 border border-neon-cyan/50 p-6 rounded-2xl text-center space-y-3">
+                    <div class="text-3xl text-neon-cyan"><i class="fa-solid fa-trophy"></i></div>
+                    <h4 class="text-xl font-bold text-white" id="quizFinalTitle">نتیجه آزمون</h4>
+                    <p class="text-xs text-slate-300" id="quizFinalDesc"></p>
+                    <button onclick="resetQuizApp()" class="px-5 py-2 bg-neon-cyan text-black font-bold text-xs rounded-xl hover:bg-cyan-300 transition-all">
+                        تلاش مجدد و ثبت امتیاز کامل
+                    </button>
+                </div>
+            </section>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-6 bg-darkbg text-center text-xs text-slate-500">
+        <p>طراحی شده ویژه هنرجویان رشته شبکه و نرم‌افزار رایانه - پایه دهم هنرستان‌های کشور | ۱۴۰۵ - ۱۴۰۳</p>
+    </footer>
+
+    <script>
+        // Web Audio Synthesizer (No external sound files required)
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(freq = 440, type = 'sine', duration = 0.1) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e){}
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-neon-cyan';
+                text.innerText = 'افکت صوتی: فعال';
+                playSound(600, 'sine', 0.1);
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                text.innerText = 'افکت صوتی: غیرفعال';
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            playSound(500, 'triangle', 0.08);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-gradient-to-r', 'from-neon-cyan', 'to-blue-600', 'text-black', 'shadow-neon-cyan');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const activeContent = document.getElementById(`view-${tabId}`);
+            if (activeContent) activeContent.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.add('active', 'bg-gradient-to-r', 'from-neon-cyan', 'to-blue-600', 'text-black', 'shadow-neon-cyan');
+            }
+
+            if (tabId === 'pen') {
+                setTimeout(resizeCanvas, 100);
+            }
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Architecture Interactive Block Selection
+        const archData = {
+            input: {
+                title: "بخش ورودی (Input Unit)",
+                desc: "دستگاه‌های ورودی ابزارهایی هستند که داده‌ها را از دنیای خارج به رایانه منتقل می‌کنند. شامل متن، تصاویر، صدا، فیلم یا حرکات گیمر.",
+                color: "text-neon-cyan"
+            },
+            cpu: {
+                title: "واحد پردازش (Central Processing Unit)",
+                desc: "مغز متفکر رایانه که مسئول انجام محاسبات ریاضی، پردازش‌های منطقی و هماهنگی کل اجزا است.",
+                color: "text-blue-400"
+            },
+            memory: {
+                title: "حافظه (Memory)",
+                desc: "جزء جداناپذیر هر سیستم رایانه‌ای که ارتباط مستقیم با واحد پردازش دارد و داده‌های مورد پردازش را نگه‌داری می‌کند.",
+                color: "text-neon-purple"
+            },
+            output: {
+                title: "بخش خروجی (Output Unit)",
+                desc: "نتایج حاصل از پردازش داده‌ها را به شکل قابل فهم برای انسان (صفحه نمایش، صدا، چاپ روی کاغذ) ارائه می‌دهد.",
+                color: "text-neon-green"
+            }
+        };
+
+        function selectArchBlock(blockKey) {
+            playSound(600, 'sine', 0.08);
+            const data = archData[blockKey];
+            const titleEl = document.getElementById('archDetailTitle');
+            const descEl = document.getElementById('archDetailDesc');
+
+            titleEl.className = `text-base font-bold flex items-center gap-2 ${data.color}`;
+            titleEl.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${data.title}`;
+            descEl.innerText = data.desc;
+        }
+
+        function simulateDataFlow() {
+            playSound(800, 'sine', 0.2);
+            const status = document.getElementById('flowStatus');
+            status.classList.remove('hidden');
+
+            setTimeout(() => {
+                status.innerHTML = '<i class="fa-solid fa-microchip text-neon-purple animate-pulse ml-2"></i> <span>داده‌ها در حال پردازش در CPU و ذخیره موقت در حافظه...</span>';
+                playSound(950, 'sine', 0.2);
+            }, 1200);
+
+            setTimeout(() => {
+                status.innerHTML = '<i class="fa-solid fa-check text-neon-green ml-2"></i> <span class="text-neon-green">پردازش کامل شد! نتایج نهایی به دستگاه خروجی خروجی ارسال گردید.</span>';
+                playSound(1100, 'sine', 0.25);
+            }, 2500);
+
+            setTimeout(() => {
+                status.classList.add('hidden');
+                status.innerHTML = '<i class="fa-solid fa-spinner animate-spin ml-2"></i> <span>در حال ارسال داده از دستگاه ورودی به پردازشگر و حافظه...</span>';
+            }, 5000);
+        }
+
+        // Device Category Filtering
+        function filterDevice(cat) {
+            playSound(520, 'sine', 0.05);
+            document.querySelectorAll('.dev-filter-btn').forEach(b => {
+                b.className = 'dev-filter-btn px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs';
+            });
+            event.target.className = 'dev-filter-btn px-3 py-1.5 rounded-xl bg-neon-amber text-black font-bold text-xs';
+
+            document.querySelectorAll('.device-card').forEach(card => {
+                if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Canvas Drawing Tablet Simulator
+        let canvas, ctx;
+        let isDrawing = false;
+        let penColor = '#00f3ff';
+        let penWidth = 6;
+        let currentTool = 'pen';
+        let currentPreset = 'graphic';
+
+        function initCanvas() {
+            canvas = document.getElementById('penCanvas');
+            if (!canvas) return;
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+
+            // Mouse Events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            // Touch Events for Mobile / Tablet
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopDrawing();
+            });
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+            clearCanvas();
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            playSound(700, 'sine', 0.03);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = (currentTool === 'eraser') ? '#0f172a' : penColor;
+            ctx.lineWidth = penWidth;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                ctx.closePath();
+                isDrawing = false;
+            }
+        }
+
+        function clearCanvas() {
+            playSound(300, 'sawtooth', 0.1);
+            if (!ctx) return;
+            ctx.fillStyle = '#0f172a'; // Canvas dark background
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid guides for preset feel
+            drawGuides();
+        }
+
+        function drawGuides() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        function updatePenColor(val) {
+            penColor = val;
+            currentTool = 'pen';
+            updateToolUI();
+        }
+
+        function updatePenWidth(val) {
+            penWidth = val;
+            document.getElementById('penWidthLabel').innerText = `${val}px`;
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            updateToolUI();
+        }
+
+        function updateToolUI() {
+            const penBtn = document.getElementById('toolPenBtn');
+            const eraserBtn = document.getElementById('toolEraserBtn');
+            if (currentTool === 'pen') {
+                penBtn.className = 'px-3 py-1.5 bg-neon-cyan text-black font-bold text-xs rounded-lg flex items-center gap-1';
+                eraserBtn.className = 'px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs rounded-lg flex items-center gap-1';
+            } else {
+                eraserBtn.className = 'px-3 py-1.5 bg-neon-rose text-black font-bold text-xs rounded-lg flex items-center gap-1';
+                penBtn.className = 'px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs rounded-lg flex items-center gap-1';
+            }
+        }
+
+        const presetMap = {
+            graphic: { name: "طراحی گرافیکی (لوگو و شخصیت)", color: "#00f3ff", width: 6 },
+            edit: { name: "ویرایش تصاویر (روتوش)", color: "#00ff66", width: 4 },
+            anim: { name: "طراحی انیمیشن", color: "#ab00ff", width: 5 },
+            calligraphy: { name: "کالیگرافی و خوشنویسی دیجیتال", color: "#ffb700", width: 12 },
+            arch: { name: "طراحی نقشه و پلان معماری", color: "#ff0055", width: 2 },
+            '3d': { name: "طراحی مدل‌سازی ۳ بعدی", color: "#0066ff", width: 8 }
+        };
+
+        function setPenPreset(presetKey) {
+            playSound(600, 'sine', 0.08);
+            const preset = presetMap[presetKey];
+            document.getElementById('currentPresetName').innerText = preset.name;
+            penColor = preset.color;
+            penWidth = preset.width;
+
+            document.getElementById('penColorPicker').value = preset.color;
+            document.getElementById('penWidthSlider').value = preset.width;
+            document.getElementById('penWidthLabel').innerText = `${preset.width}px`;
+
+            document.querySelectorAll('.pen-preset-btn').forEach(btn => {
+                btn.classList.remove('border-neon-purple', 'border-neon-cyan');
+                btn.classList.add('border-slate-800');
+            });
+            event.currentTarget.classList.remove('border-slate-800');
+            event.currentTarget.classList.add('border-neon-cyan');
+
+            clearCanvas();
+        }
+
+        // Quiz Logic
+        let quizScore = 0;
+        let answeredQuestions = 0;
+        const totalQuizQuestions = 5;
+
+        function answerQuiz(btn, qNum, choiceIdx) {
+            const card = btn.closest('.quiz-card');
+            if (card.getAttribute('data-answered')) return; // Prevent double answering
+
+            card.setAttribute('data-answered', 'true');
+            answeredQuestions++;
+
+            const correctIdx = parseInt(card.getAttribute('data-correct'));
+            const buttons = card.querySelectorAll('.opt-btn');
+            const feedback = card.querySelector('.quiz-feedback');
+
+            buttons.forEach(b => b.classList.add('pointer-events-none', 'opacity-60'));
+
+            if (choiceIdx === correctIdx) {
+                quizScore++;
+                playSound(880, 'sine', 0.15);
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('bg-emerald-950', 'border', 'border-neon-green', 'text-neon-green');
+                feedback.classList.remove('hidden');
+                feedback.classList.add('bg-emerald-950/80', 'text-neon-green', 'border', 'border-neon-green/40');
+                feedback.innerHTML = '<i class="fa-solid fa-check ml-1"></i> آفرین! پاسخ صحیح است.';
+            } else {
+                playSound(220, 'sawtooth', 0.2);
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('bg-rose-950', 'border', 'border-neon-rose', 'text-neon-rose');
+
+                buttons[correctIdx].classList.remove('bg-slate-800', 'opacity-60');
+                buttons[correctIdx].classList.add('bg-emerald-950', 'text-neon-green', 'border', 'border-neon-green/40');
+
+                feedback.classList.remove('hidden');
+                feedback.classList.add('bg-rose-950/80', 'text-neon-rose', 'border', 'border-rose-900/40');
+                feedback.innerHTML = '<i class="fa-solid fa-xmark ml-1"></i> پاسخ نادرست! گزینه مشخص شده پاسخ صحیح است.';
+            }
+
+            updateQuizScoreUI();
+
+            if (answeredQuestions === totalQuizQuestions) {
+                showQuizResult();
+            }
+        }
+
+        function updateQuizScoreUI() {
+            document.getElementById('quizScore').innerText = `${quizScore} / ${totalQuizQuestions}`;
+            const rank = document.getElementById('quizRank');
+
+            if (quizScore === 5) {
+                rank.innerText = 'استاد سخت‌افزار 🏆';
+                rank.className = 'text-xs font-bold text-neon-green glow-cyan-text';
+            } else if (quizScore >= 3) {
+                rank.innerText = 'هنرجوی پیشرفته ⚡';
+                rank.className = 'text-xs font-bold text-neon-cyan';
+            } else {
+                rank.innerText = 'هنرجوی مبتدی 💻';
+                rank.className = 'text-xs font-bold text-neon-amber';
+            }
+        }
+
+        function showQuizResult() {
+            playSound(700, 'sine', 0.3);
+            const box = document.getElementById('quizResultBox');
+            const title = document.getElementById('quizFinalTitle');
+            const desc = document.getElementById('quizFinalDesc');
+
+            box.classList.remove('hidden');
+            if (quizScore === 5) {
+                title.innerText = 'مدال طلایی هکر سخت‌افزار تقدیم به شما! 🥇';
+                desc.innerText = 'تسلط کامل بر معماری اصلی و دستگاه‌های ورودی کتاب درسی دهم.';
+            } else if (quizScore >= 3) {
+                title.innerText = 'عملکرد عالی! مدال نقره‌ای تحلیل‌گر سیستم 🥈';
+                desc.innerText = 'شما مفاهیم کلیدی ورودی و پردازش رایانه را فرا گرفته‌اید.';
+            } else {
+                title.innerText = 'نیازمند مرور کوتاه کارت‌های آموزشی 📚';
+                desc.innerText = 'توصیه می‌کنیم یک‌بار دیگر بخش‌های فوق را مرور کنی و آزمون را مجدداً انجام دهی.';
+            }
+        }
+
+        function resetQuizApp() {
+            playSound(400, 'sine', 0.1);
+            quizScore = 0;
+            answeredQuestions = 0;
+
+            document.getElementById('quizResultBox').classList.add('hidden');
+            document.querySelectorAll('.quiz-card').forEach(card => {
+                card.removeAttribute('data-answered');
+                const buttons = card.querySelectorAll('.opt-btn');
+                const feedback = card.querySelector('.quiz-feedback');
+                feedback.classList.add('hidden');
+
+                buttons.forEach(b => {
+                    b.className = 'opt-btn p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-right transition-all';
+                });
+            });
+
+            updateQuizScoreUI();
+        }
+
+        // Initialize Canvas on Page Load
+        window.onload = function() {
+            initCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        };
+    </script>
+</body>
+</html>
