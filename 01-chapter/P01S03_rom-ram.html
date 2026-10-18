@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متن اجرایی جلسه سوم: ROM، ثابت‌افزار و RAM — دانش فنی، پایه دهم</title>
+<style>
+  :root {
+    --ink: #16231f;
+    --muted: #4c5f58;
+    --paper: #fbfcfb;
+    --wash: #eef3f0;
+    --line: #cddbd3;
+    --board: #1d4a3d;
+    --board-deep: #143429;
+    --chalk: #f4f1e6;
+    --say: #1d4a3d;
+    --act: #b9851b;
+    --act-bg: #fbf3df;
+    --ask: #2b5f9e;
+    --ask-bg: #eaf1fa;
+    --warn: #a3392f;
+    --warn-bg: #fbeceb;
+    --font: Vazirmatn, "IRANSansX", "Noto Naskh Arabic", Tahoma, "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1.0625rem;
+    line-height: 2;
+  }
+  .en { font-family: "Segoe UI", system-ui, Arial, sans-serif; font-size: .92em; color: var(--muted); direction: ltr; unicode-bidi: isolate; }
+  code, .bits { font-family: "Cascadia Mono", Consolas, "Courier New", monospace; direction: ltr; unicode-bidi: isolate; }
+  code { background: var(--wash); padding: 0 .35em; border-radius: 4px; font-size: .95em; }
+
+  /* ---------- sticky 90-minute bar ---------- */
+  .timeline {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--board-deep);
+    padding: .5rem .75rem;
+    box-shadow: 0 2px 0 var(--line);
+  }
+  .timeline ol { list-style: none; margin: 0 auto; padding: 0; display: flex; gap: 3px; max-width: 64rem; }
+  .timeline li { flex: var(--m) 1 0; min-width: 3.7rem; }
+  .timeline a {
+    display: block; text-decoration: none; text-align: center;
+    background: var(--board); color: var(--chalk);
+    border-radius: 6px; padding: .2rem .15rem;
+    font-size: .74rem; line-height: 1.5;
+  }
+  .timeline a span { display: block; color: #f2c94c; font-size: .72rem; }
+  .timeline a:hover, .timeline a:focus-visible { background: #2a6552; outline: 2px solid #f2c94c; outline-offset: 1px; }
+
+  /* ---------- page ---------- */
+  header.top { background: var(--board); color: var(--chalk); padding: 2.2rem 1rem 2.4rem; }
+  header.top .in, main { max-width: 52rem; margin: 0 auto; padding-inline: 1rem; }
+  header.top .in { padding: 0; }
+  header.top h1 { font-size: clamp(1.7rem, 4.4vw, 2.5rem); line-height: 1.5; margin: 0 0 .4rem; font-weight: 800; }
+  header.top p { margin: 0; color: #d6e2db; }
+  .legend { display: grid; gap: .5rem; margin-top: 1.4rem; font-size: .92rem; line-height: 1.8; }
+  .legend div { display: flex; gap: .6rem; align-items: baseline; }
+  .legend i { flex: none; width: 2.2rem; height: .7rem; border-radius: 3px; display: inline-block; transform: translateY(.05rem); }
+
+  main { padding-block: 1.5rem 4rem; }
+  section.stage { padding-top: 2.4rem; scroll-margin-top: 4rem; }
+  .stage > h2 {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    font-size: 1.6rem; line-height: 1.6; margin: 0 0 1rem; padding-bottom: .4rem;
+    border-bottom: 3px solid var(--board);
+  }
+  .time { font-size: .9rem; font-weight: 500; color: var(--board); background: var(--wash); border-radius: 999px; padding: 0 .8rem; white-space: nowrap; }
+  h3 { font-size: 1.28rem; line-height: 1.7; margin: 2.2rem 0 .6rem; color: var(--board); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; }
+  h4 { font-size: 1.08rem; margin: 1.6rem 0 .3rem; }
+
+  /* what the teacher says */
+  .say { border-inline-start: 5px solid var(--say); padding: .2rem 1rem; margin: 1rem 0; }
+  .say p { margin: .3rem 0; }
+  /* what the teacher does */
+  .act { background: var(--act-bg); border-inline-start: 5px solid var(--act); border-radius: 0 8px 8px 0; padding: .35rem .9rem; margin: .8rem 0; font-style: italic; color: #4c3a0a; }
+  [dir="rtl"] .act { border-radius: 8px 0 0 8px; }
+  .act p { margin: .2rem 0; }
+  /* oral question */
+  .ask { background: var(--ask-bg); border: 1px solid #bcd2ec; border-radius: 8px; padding: .5rem .9rem; margin: 1rem 0; }
+  .ask b { color: var(--ask); }
+  .ask .ans { display: block; color: var(--muted); font-size: .95rem; }
+  .ask ul { margin: .3rem 0; padding-inline-start: 1.4rem; }
+  /* what is written on the board */
+  .board {
+    background: var(--board-deep); color: var(--chalk);
+    border: 6px solid #8a6a43; border-radius: 6px;
+    padding: .8rem 1.1rem; margin: 1rem 0;
+    box-shadow: inset 0 0 18px rgba(0,0,0,.35);
+  }
+  .board .cap { font-size: .8rem; color: #f2c94c; display: block; margin-bottom: .2rem; }
+  .board p { margin: .2rem 0; }
+  .board .en, .board code { color: #cfe0d6; background: transparent; }
+  .board .chain { display: flex; flex-wrap: wrap; gap: .4rem .6rem; align-items: center; }
+  .board .chain span.n { border: 1.5px dashed #cfe0d6; border-radius: 6px; padding: 0 .6rem; }
+  .board .chain span.arr { color: #f2c94c; }
+  .bits { display: inline-flex; gap: 4px; margin: .3rem 0; }
+  .bits b { width: 1.9rem; height: 2.1rem; display: grid; place-items: center; border: 1.5px solid #cfe0d6; border-radius: 4px; font-weight: 600; line-height: 1; }
+  .transition { color: var(--board); font-weight: 600; margin-top: 1.2rem; }
+  .transition::before { content: "گذار: "; color: var(--muted); font-weight: 400; }
+
+  .tablewrap { overflow-x: auto; margin: 1rem 0; max-width: 100%; }
+  table { border-collapse: collapse; width: 100%; min-width: 30rem; font-size: .98rem; line-height: 1.8; }
+  th, td { border: 1px solid var(--line); padding: .3rem .7rem; text-align: right; vertical-align: top; }
+  th { background: var(--wash); }
+  .board table { color: var(--chalk); }
+  .board th, .board td { border-color: #5d8a78; background: transparent; }
+  td.bits-cell { font-family: "Cascadia Mono", Consolas, monospace; direction: ltr; text-align: left; }
+
+  .summary { background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; }
+  .summary ul { margin: 0; padding-inline-start: 1.3rem; }
+  .summary li { margin: .4rem 0; }
+  .warn { background: var(--warn-bg); border-inline-start: 5px solid var(--warn); border-radius: 8px; padding: .6rem 1rem; margin: 1rem 0; }
+  .warn h4 { margin-top: 0; color: var(--warn); }
+  .warn ul { margin: .2rem 0; padding-inline-start: 1.3rem; }
+
+  ol.steps { padding-inline-start: 1.5rem; }
+  .groups { width: 100%; }
+
+  details { border: 1px solid var(--line); border-radius: 8px; margin: .5rem 0 1.1rem; padding: .2rem .9rem; background: #fff; }
+  summary { cursor: pointer; font-weight: 600; color: var(--board); }
+  summary:focus-visible { outline: 2px solid var(--ask); outline-offset: 3px; }
+  .q { margin: 1.1rem 0 0; font-weight: 600; }
+
+  blockquote.handoff { margin: 1rem 0; padding: .8rem 1.1rem; background: var(--wash); border-radius: 10px; border: 1px dashed var(--board); }
+  .copybtn { font: inherit; font-size: .9rem; cursor: pointer; background: var(--board); color: var(--chalk); border: 0; border-radius: 6px; padding: .2rem .9rem; margin-top: .4rem; }
+  .copybtn:focus-visible { outline: 2px solid #f2c94c; outline-offset: 2px; }
+
+  @media print {
+    .timeline, .copybtn { display: none; }
+    body { font-size: 11.5pt; line-height: 1.85; }
+    header.top { background: none; color: #000; padding: 0 0 .6rem; border-bottom: 2px solid #000; }
+    header.top p { color: #000; }
+    .board { background: #fff; color: #000; border: 2px solid #000; box-shadow: none; }
+    .board .en, .board code, .board .cap { color: #000; }
+    .board .chain span.n { border-color: #000; }
+    .bits b { border-color: #000; }
+    .board th, .board td { border-color: #000; }
+    .board table { color: #000; }
+    section.stage { break-inside: auto; }
+    h2, h3 { break-after: avoid; }
+    details { break-inside: avoid; }
+    details > * { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="timeline" aria-label="مراحل ۹۰ دقیقه‌ای جلسه">
+  <ol>
+    <li style="--m:7"><a href="#warmup">گرم‌کردن<span>۷ دقیقه</span></a></li>
+    <li style="--m:33"><a href="#teach">تدریس<span>۳۳ دقیقه</span></a></li>
+    <li style="--m:15"><a href="#guided">هدایت‌شده<span>۱۵ دقیقه</span></a></li>
+    <li style="--m:22"><a href="#indep">مستقل<span>۲۲ دقیقه</span></a></li>
+    <li style="--m:13"><a href="#wrap">جمع‌بندی<span>۱۳ دقیقه</span></a></li>
+  </ol>
+</nav>
+
+<header class="top">
+  <div class="in">
+    <h1>متن اجرایی جلسه سوم<br>ROM، ثابت‌افزار و RAM</h1>
+    <p>درس دانش فنی، رشته کامپیوتر، پایه دهم — ۹۰ دقیقه — حدود ۳۵ دانش‌آموز — فقط تخته (پروژکتور اختیاری)</p>
+    <div class="legend" aria-label="راهنمای رنگ‌ها">
+      <div><i style="background:#fbfcfb;border-inline-start:5px solid #7fb39f"></i> متن با خط سبز: همین را بخوان</div>
+      <div><i style="background:#fbf3df;border-inline-start:5px solid #b9851b"></i> متن مورب با پس‌زمینه زرد: کاری که باید انجام بدهی (تخته، مکث، گروه‌بندی)</div>
+      <div><i style="background:#eaf1fa;border:1px solid #bcd2ec"></i> کادر آبی: سؤال شفاهی و پاسخ مورد انتظار</div>
+      <div><i style="background:#143429;border:2px solid #8a6a43"></i> کادر تخته: آنچه روی تخته می‌نویسی یا می‌کشی</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== SUMMARY ===================== -->
+<section class="stage" id="summary" style="padding-top:1.2rem">
+  <h2>۱. خلاصه تحلیل محتوا</h2>
+  <div class="summary">
+    <ul>
+      <li><b>مفاهیم هسته‌ای:</b> ROM و ثابت‌افزار (Firmware)؛ EPROM/EEPROM و BIOS/UEFI با کاربردهای ثابت‌افزار؛ حافظه RAM؛ بیت و بایت (۲۵۶ حالت).</li>
+      <li><b>به تعویق‌افتاده:</b> طرز کار فنی EPROM/EEPROM (خوب است بدانند). از جلسات قبل هم هنوز معوق است: ترانزیستور، تاریخچه IT ایران و ارائه تحقیق بردهای اصلی. پیشنهاد: ارائه تحقیق‌ها ابتدای جلسه بعد.</li>
+      <li><b>نقطه مبهم اصلی:</b> ROM و هارد هر دو «می‌مانند»، پس دانش‌آموز آن‌ها را قاطی می‌کند. تفاوت: ROM فقط‌خواندنی و برای برنامه‌های ثابت دستگاه است؛ هارد قابل نوشتن و برای فایل‌های کاربر.</li>
+      <li><b>پیش‌نیاز درون‌سری:</b> از جلسه ۱ برد اصلی (Motherboard)؛ از جلسه ۲ فرق حافظه پنهان (Cache) با RAM و حافظه دائمی، و واکشی دستور توسط CU. مرور کوتاه آن‌ها در گرم‌کردن آمده است.</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <h4>سه نکته درباره کتاب (قبل از کلاس بخوان)</h4>
+    <ul>
+      <li>عدد <code>00101000</code> در کتاب معادل «C» نیست (این کد علامت «(» است). در متن از <code>01000011</code> برای C استفاده شده است.</li>
+      <li>کتاب بایت را «کوچک‌ترین واحد ذخیره» می‌نامد. از نظر علمی بیت (Bit) کوچک‌ترین است. در متن گفته شده «بیت کوچک‌ترین، بایت کوچک‌ترین واحد کاربردی ذخیره»، و جمله کتاب هم برای امتحان به بچه‌ها گفته می‌شود.</li>
+      <li>«I.T» در کتاب باید «IoT» (اینترنت اشیا) باشد.</li>
+    </ul>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>مرحله</th><th>زمان</th></tr></thead>
+      <tbody>
+        <tr><td>گرم‌کردن</td><td>۷ دقیقه</td></tr>
+        <tr><td>تدریس مستقیم (۴ مفهوم: ۷ + ۸ + ۸ + ۱۰)</td><td>۳۳ دقیقه</td></tr>
+        <tr><td>تمرین هدایت‌شده</td><td>۱۵ دقیقه</td></tr>
+        <tr><td>تمرین مستقل</td><td>۲۲ دقیقه</td></tr>
+        <tr><td>جمع‌بندی و Exit Ticket</td><td>۱۳ دقیقه</td></tr>
+        <tr><th>جمع</th><th>۹۰ دقیقه</th></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== WARM-UP ===================== -->
+<section class="stage" id="warmup">
+  <h2>۲. گرم‌کردن <span class="time">دقیقه ۰ تا ۷</span></h2>
+
+  <div class="act"><p>(قبل از شروع، وسط تخته بزرگ بنویس: «برق رفت!» و دو ستون بکش: «می‌رود» و «می‌ماند».)</p></div>
+
+  <div class="say">
+    <p>سلام بچه‌ها. یک ماجرا تعریف کنم. فرض کنید چهل دقیقه نشسته‌اید پای لپ‌تاپ و گزارش علوم را در Word نوشته‌اید. هنوز ذخیره نکرده‌اید که برق می‌رود.</p>
+  </div>
+  <div class="act"><p>(مکث کن؛ چند نفر معمولاً می‌گویند «وای!»)</p></div>
+  <div class="say">
+    <p>خب، بعد از برگشتن برق چه می‌شود؟</p>
+  </div>
+  <div class="act"><p>(۲ تا ۳ نفر جواب بدهند.)</p></div>
+  <div class="say">
+    <p>درست، آن متن ذخیره‌نشده می‌پرد. ولی دقت کنید، لپ‌تاپ روشن می‌شود، ویندوز بالا می‌آید، عکس‌های قبلی سر جایشان هستند. پس بعضی چیزها رفت و بعضی ماند. به نظر شما چرا؟</p>
+  </div>
+  <div class="act"><p>(۲ جواب بشنو و هنوز تأیید یا رد نکن.)</p></div>
+  <div class="say">
+    <p>جلسه پیش حافظه پنهان یا Cache (<span class="en">Cache Memory</span>) را دیدیم. کی یادش هست؟ یک جمله بگوید.</p>
+  </div>
+  <div class="act"><p>(یک نفر: حافظه کوچک و خیلی سریع نزدیک پردازنده.)</p></div>
+  <div class="say">
+    <p>آفرین. Cache کوچک و بسیار سریع بود. امروز سراغ بقیه حافظه‌ها می‌رویم تا بفهمیم چه چیزی می‌رود، چه چیزی می‌ماند و چرا. آخر کلاس همین سؤال را دوباره از شما می‌پرسم.</p>
+  </div>
+</section>
+
+<!-- ===================== DIRECT TEACHING ===================== -->
+<section class="stage" id="teach">
+  <h2>۳. تدریس مستقیم <span class="time">دقیقه ۷ تا ۴۰</span></h2>
+
+  <!-- Concept 1 -->
+  <h3>مفهوم ۱: ROM و ثابت‌افزار <span class="time">۷ دقیقه</span></h3>
+
+  <div class="say">
+    <p>کتاب درسی‌تان را باز کنید. می‌توانید متنش را بخوانید؟ می‌توانید جمله‌هایش را عوض کنید؟ مثلاً بگویید «از این به بعد فرمول فیزیک این است»؟</p>
+  </div>
+  <div class="act"><p>(صبر کن. بچه‌ها می‌خندند.)</p></div>
+  <div class="say">
+    <p>نه، چون ناشر چاپش کرده. شما فقط می‌خوانید.</p>
+    <p>حافظه‌ای در رایانه و وسایل دیگر هست که دقیقاً همین‌طور کار می‌کند. دکمه «پاپ‌کورن» روی ماکروویو را فشار می‌دهید و ماکروویو می‌داند چند ثانیه و با چه توانی کار کند. لباسشویی هم می‌داند برنامه شستشوی سریع چطور است. کسی تا حالا این برنامه‌ها را عوض کرده؟ نه. این‌ها فقط اجرا می‌شوند و کارخانه آن‌ها را نوشته.</p>
+    <p>این برنامه‌ها در حافظه‌ای ذخیره می‌شوند که فقط می‌شود خواند و نوشتنش فقط در کارخانه انجام می‌شود. اسمش <b>ROM</b> است، مخفف Read Only Memory، یعنی حافظه فقط‌خواندنی.</p>
+  </div>
+  <div class="board">
+    <span class="cap">روی تخته: یک جعبه بکش و بنویس</span>
+    <p><b>ROM</b> <span class="en">(Read Only Memory)</span> = فقط خواندنی؛ نوشتن فقط در کارخانه</p>
+  </div>
+  <div class="say">
+    <p>به نرم‌افزاری که داخل ROM می‌نشیند می‌گوییم <b>ثابت‌افزار</b> یا <b>firmware</b> (<span class="en">Firmware</span>). چون ثابت است و کاربر عوضش نمی‌کند.</p>
+  </div>
+  <div class="board">
+    <span class="cap">روی تخته: زیر جعبه بنویس</span>
+    <p>نرم‌افزار داخل ROM = ثابت‌افزار <span class="en">(Firmware)</span></p>
+  </div>
+
+  <div class="ask">
+    <b>سؤال شفاهی:</b> اگر برنامه پخت ماکروویو را کاربر می‌توانست پاک کند، چه مشکلی پیش می‌آمد؟
+    <span class="ans">پاسخ: ممکن بود خراب شود و دستگاه دیگر کار نکند.</span>
+  </div>
+  <p class="transition">خب، ماکروویو و لباسشویی ساده‌اند. ولی خود رایانه هم یک ROM دارد. آن هم همان لحظه‌ای که دکمه روشن را می‌زنید کار می‌کند.</p>
+
+  <!-- Concept 2 -->
+  <h3>مفهوم ۲: BIOS، UEFI، EPROM/EEPROM و کاربردهای ثابت‌افزار <span class="time">۸ دقیقه</span></h3>
+
+  <div class="say">
+    <p>دکمه روشن لپ‌تاپ را می‌زنید. در این لحظه ویندوز هنوز بالا نیامده، هارد هنوز چیزی بارگذاری نکرده. پس چه کسی اولین کار را شروع می‌کند؟</p>
+    <p>مثل صبح مدرسه است. قبل از اینکه معلم‌ها و بچه‌ها برسند، یک نفر زودتر می‌آید، در را باز می‌کند، چراغ‌ها را روشن می‌کند و همه‌جا را آماده می‌کند. بعد آدم‌های اصلی می‌رسند.</p>
+    <p>در رایانه این نفر یک ثابت‌افزار روی برد اصلی (<span class="en">Motherboard</span>) است به اسم <b>BIOS</b>، یعنی سیستم پایه ورودی/خروجی (<span class="en">Basic Input/Output System</span>). کارش راه‌اندازی اولیه سخت‌افزار و بعد بارگذاری و اجرای سیستم‌عامل (<span class="en">Operating System</span>) است. نسخه جدیدتر و پیشرفته‌تر آن <b>UEFI</b> (<span class="en">Unified Extensible Firmware Interface</span>) نام دارد که امکانات بیشتری دارد.</p>
+  </div>
+  <div class="board">
+    <span class="cap">روی تخته: یک زنجیره بکش (نسخه دیجیتال: همین زنجیره را در گروه کلاس بفرست)</span>
+    <div class="chain"><span class="n">دکمه روشن</span><span class="arr">←</span><span class="n">BIOS / UEFI</span><span class="arr">←</span><span class="n">سیستم‌عامل <span class="en">(OS)</span></span></div>
+  </div>
+  <div class="say">
+    <p>حالا یک نکته. چرا این برنامه باید در ROM باشد؟</p>
+  </div>
+  <div class="act"><p>(صبر کن.)</p></div>
+  <div class="say">
+    <p>چون برق که قطع می‌شود، اگر دستورهای شروع هم پاک می‌شدند، رایانه هیچ‌وقت نمی‌فهمید از کجا شروع کند. باید همیشه آنجا باشند.</p>
+    <p>ولی یک مشکل: اگر سازنده برد اصلی بعداً بفهمد در برنامه‌اش اشتباهی بوده یا ضعف امنیتی دارد، چه کند؟ برای همین در مدل‌های جدیدتر نوع پیشرفته‌تری از این حافظه‌ها به کار می‌رود به اسم <b>EPROM</b> (<span class="en">Erasable Programmable ROM</span>) و <b>EEPROM</b> (<span class="en">Electrically Erasable Programmable ROM</span>). این‌ها تحت شرایط خاص دوباره قابل برنامه‌ریزی‌اند و به‌روزرسانی‌هایی (<span class="en">Updates</span>) که سازنده برد اصلی می‌دهد روی آن‌ها نوشته می‌شود.</p>
+  </div>
+  <div class="board">
+    <span class="cap">روی تخته: بنویس</span>
+    <p>EPROM و EEPROM = ROM پیشرفته؛ قابل برنامه‌ریزی مجدد در شرایط خاص</p>
+  </div>
+  <div class="say">
+    <p>ثابت‌افزار فقط در رایانه نیست.</p>
+  </div>
+  <div class="act"><p>(پنج مورد را روی تخته بنویس و برای هر کدام یک جمله بگو.)</p></div>
+  <div class="board">
+    <span class="cap">روی تخته: کاربردهای ثابت‌افزار</span>
+    <p>گوشی هوشمند — اینترنت اشیا <span class="en">(IoT)</span> — گجت‌های ورزشی <span class="en">(Sports Gadgets)</span> — مودم و مسیریاب <span class="en">(Modem / Router)</span> — رایانه و لپ‌تاپ</p>
+  </div>
+  <div class="say">
+    <p><b>گوشی هوشمند:</b> ثابت‌افزارش سخت‌افزار گوشی را مدیریت می‌کند و به‌روزرسانی‌اش عملکرد و امنیت را بهتر می‌کند.</p>
+    <p><b>دستگاه‌های اینترنت اشیا (Internet of Things)،</b> مثل لامپ یا دوربین هوشمند: ثابت‌افزار عملکردشان را کنترل می‌کند و امنیتشان را تضمین می‌کند.</p>
+    <p><b>گجت‌های ورزشی،</b> مثل ساعت هوشمند و گام‌شمار: ثابت‌افزار حسگرها (<span class="en">Sensors</span>) و ردیابی فعالیت را کنترل می‌کند.</p>
+    <p><b>مودم (<span class="en">Modem</span>) و مسیریاب (<span class="en">Router</span>):</b> مدیریت اتصال‌های شبکه، امنیت و ترافیک.</p>
+    <p><b>رایانه و لپ‌تاپ:</b> همان BIOS یا UEFI.</p>
+  </div>
+
+  <div class="ask">
+    <b>سؤال شفاهی:</b> فرق ROM معمولی با EEPROM چیست؟
+    <span class="ans">پاسخ: EEPROM در شرایط خاص دوباره قابل نوشتن است و ROM معمولی نه.</span>
+  </div>
+  <p class="transition">ROM را شناختیم: ثابت و ماندگار. حالا ببینیم کجا کار واقعیِ لحظه‌به‌لحظه انجام می‌شود و چیزها می‌آیند و می‌روند.</p>
+
+  <!-- Concept 3 -->
+  <h3>مفهوم ۳: RAM <span class="time">۸ دقیقه</span></h3>
+
+  <div class="say">
+    <p>میز تحریرتان را در نظر بگیرید. وقتی تکلیف می‌نویسید چه چیزهایی روی میز است؟ دفتر، کتاب، ماشین‌حساب. کتاب‌های بقیه درس‌ها کجاست؟</p>
+  </div>
+  <div class="act"><p>(بچه‌ها: توی کمد یا قفسه.)</p></div>
+  <div class="say">
+    <p>اگر میزتان کوچک باشد چه می‌شود؟ فقط یکی دو چیز جا می‌شود. اگر بزرگ باشد، چند تا کتاب و دفتر را هم‌زمان باز می‌گذارید.</p>
+    <p>RAM (<span class="en">Random Access Memory</span>) دقیقاً میز کار رایانه است. اسمش حافظه اصلی (<span class="en">Main Memory</span>) است: حافظه‌ای <b>موقت و سریع</b>. سیستم‌عامل برای اجرای نرم‌افزارها و نگهداری مقدارهای برنامه‌هایی که الآن در حال اجرا هستند از آن استفاده می‌کند. هرچه RAM بزرگ‌تر باشد، رایانه برنامه‌های بیشتری را هم‌زمان اجرا می‌کند و به آن‌ها دسترسی دارد.</p>
+  </div>
+  <div class="act"><p>(روی تخته یک میز بکش و روی آن چند مستطیل کوچک با نام برنامه. شکل ۱۱ کتاب را هم نشان بده.)</p></div>
+  <div class="say">
+    <p>حالا برگردیم به گزارش ذخیره‌نشده. نوشته‌ات روی میز بود. برق که رفت، میز خالی شد. اگر ذخیره کرده بودی چه می‌شد؟ سیستم‌عامل آن را از RAM به <b>حافظه دائمی</b> (<span class="en">Permanent Storage</span>) مثل هارد دیسک (<span class="en">Hard Disk Drive – HDD</span>) منتقل می‌کند. هارد مثل کمد یا قفسه کتاب است: جایی که همه چیز می‌ماند.</p>
+  </div>
+  <div class="act"><p>(جدول را روی تخته بکش و همراه با حرف‌هایت پر کن. نسخه دیجیتال: همین جدول را در گروه بفرست.)</p></div>
+  <div class="board">
+    <span class="cap">روی تخته: جدول مقایسه</span>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>ROM <span class="en">(Read Only Memory)</span></th><th>RAM <span class="en">(Main Memory)</span></th><th>حافظه دائمی (هارد) <span class="en">(Permanent Storage)</span></th></tr></thead>
+        <tbody>
+          <tr><td>برق قطع شود</td><td>می‌ماند</td><td>می‌رود</td><td>می‌ماند</td></tr>
+          <tr><td>نوشتن</td><td>فقط کارخانه (یا EEPROM در شرایط خاص)</td><td>آزاد و سریع</td><td>آزاد، کندتر</td></tr>
+          <tr><td>کار</td><td>برنامه‌های ثابت و راه‌اندازی</td><td>میز کار برنامه‌های در حال اجرا</td><td>نگهداری فایل‌ها</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="say">
+    <p>این جدول همان جواب سؤال اول کلاس است. یک چیز دیگر را هم از جلسه قبل یادآوری می‌کنم: Cache از RAM کوچک‌تر و سریع‌تر و به پردازنده (<span class="en">Processor / CPU</span>) نزدیک‌تر بود. هرچه به پردازنده نزدیک‌تر می‌شویم حافظه سریع‌تر و کم‌حجم‌تر است، و هرچه دورتر، کندتر و پرحجم‌تر.</p>
+  </div>
+
+  <div class="ask">
+    <b>سؤال شفاهی:</b> اگر کسی بیست تا تب مرورگر باز کند و رایانه کند شود، به زبان میز بگو چه شده؟
+    <span class="ans">پاسخ: میز پر شده.</span>
+  </div>
+  <p class="transition">میز کار هم جای ذخیره‌کردن چیزهاست. ولی رایانه این چیزها را چطور می‌نویسد؟ رایانه نه حرف می‌فهمد نه عدد معمولی. زبانش چیست؟</p>
+
+  <!-- Concept 4 -->
+  <h3>مفهوم ۴: بیت و بایت <span class="time">۱۰ دقیقه</span></h3>
+
+  <div class="say">
+    <p>هشت تا چراغ را کنار هم تصور کنید. هر چراغ یا خاموش است یا روشن. فقط یک چراغ داشته باشیم، چند حالت می‌تواند داشته باشد؟</p>
+  </div>
+  <div class="act"><p>(دو: خاموش یا روشن.)</p></div>
+  <div class="say"><p>دو چراغ؟</p></div>
+  <div class="act"><p>(چهار.)</p></div>
+  <div class="say"><p>سه چراغ؟</p></div>
+  <div class="act"><p>(هشت.)</p></div>
+  <div class="say"><p>هر بار که یک چراغ اضافه می‌کنیم، تعداد حالت‌ها چند برابر می‌شود؟</p></div>
+  <div class="act"><p>(دو برابر.)</p></div>
+  <div class="board">
+    <span class="cap">روی تخته: بنویس و بچه‌ها با هم ادامه بدهند</span>
+    <p>۱ چراغ = ۲ ← ۲ چراغ = ۴ ← ۳ چراغ = ۸ ← ۴ چراغ = ۱۶ ← ۵ چراغ = ۳۲ ← ۶ چراغ = ۶۴ ← ۷ چراغ = ۱۲۸ ← ۸ چراغ = ۲۵۶</p>
+  </div>
+  <div class="say">
+    <p>هشت چراغ می‌شود ۲۵۶ حالت. رایانه هم دقیقاً همین است. هر چراغ یک <b>بیت</b> (<span class="en">Bit – Binary Digit</span>) است، یعنی یک صفر یا یک. بیت کوچک‌ترین واحد اطلاعات است. هشت بیت کنار هم می‌شود یک <b>بایت</b> (<span class="en">Byte</span>)، و یک بایت می‌تواند ۲۵۶ حالت مختلف داشته باشد.</p>
+  </div>
+  <div class="board">
+    <span class="cap">روی تخته: هشت خانه بکش و در هر خانه صفر یا یک بنویس؛ بایت را دور آن‌ها خط بکش</span>
+    <div class="bits"><b>0</b><b>1</b><b>0</b><b>0</b><b>0</b><b>0</b><b>0</b><b>1</b></div>
+    <p>۸ بیت = ۱ بایت = ۲۵۶ حالت</p>
+  </div>
+  <div class="say">
+    <p>کتاب بایت را کوچک‌ترین واحد ذخیره اطلاعات می‌نامد. منظورش کوچک‌ترین واحد کاربردی ذخیره‌سازی است. در امتحان همان جمله کتاب را بنویسید، ولی بدانید که بیت از آن هم کوچک‌تر است.</p>
+    <p>حالا این هشت خانه به چه کار می‌آید؟ هر حرف و رقم و علامت (کاراکتر، <span class="en">Character</span>) را با یک الگوی مخصوص از صفر و یک ثبت می‌کنیم. مثلاً الگوی <code>01000001</code> یعنی حرف <b>A</b>. الگوی <code>01000011</code> یعنی حرف <b>C</b>.</p>
+  </div>
+  <div class="act"><p>(هر دو الگو را در هشت خانه بنویس. تأکید کن این‌ها قرارداد هستند، نه محاسبه.)</p></div>
+  <div class="say">
+    <p>رایانه حرف را نمی‌شناسد. الگوی صفر و یکی را می‌شناسد که ما برای آن حرف قرارداد کرده‌ایم.</p>
+  </div>
+
+  <div class="ask">
+    <b>سؤال‌های شفاهی (ساده ← متوسط ← چالشی):</b>
+    <ul>
+      <li>یک بیت چند حالت دارد؟ <span class="ans">پاسخ: ۲</span></li>
+      <li>با سه بیت چند حالت می‌شود ساخت؟ <span class="ans">پاسخ: ۸</span></li>
+      <li>چرا بایت ۲۵۶ حالت دارد و نه ۱۶ (یعنی ۸ × ۲)؟ <span class="ans">پاسخ: چون هر بیت حالت‌ها را دو برابر می‌کند، نه اینکه ۲ تا به آن اضافه کند.</span></li>
+    </ul>
+  </div>
+  <p class="transition">خب، دانستنی‌ها را جمع کردیم. حالا نوبت شماست. اول بازی می‌کنیم.</p>
+</section>
+
+<!-- ===================== GUIDED ===================== -->
+<section class="stage" id="guided">
+  <h2>۴. تمرین هدایت‌شده <span class="time">دقیقه ۴۰ تا ۵۵</span></h2>
+  <p>کتاب در این بخش فعالیت مشخصی ندارد، پس دو تمرین طراحی شده است.</p>
+
+  <h3>الف) بازی «ROM یا RAM یا هیچ‌کدام» <span class="time">۹ دقیقه</span></h3>
+  <div class="say">
+    <p>قانون بازی: من یک مورد می‌گویم. اگر فکر می‌کنید در <b>ROM</b> است، مشت‌تان را بالا ببرید. اگر در <b>RAM</b> است، کف دست باز. اگر نه RAM است نه ROM و حافظه دائمی (<span class="en">Permanent Storage</span>) مثل هارد است، دست روی سرتان. بعد از سه می‌شمارم و همه هم‌زمان نشان می‌دهند.</p>
+  </div>
+  <div class="act"><p>(بعد از هر مورد از یک نفر که دست متفاوت داشت دلیل بخواه.)</p></div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>#</th><th>مورد</th><th>پاسخ</th></tr></thead>
+      <tbody>
+        <tr><td>۱</td><td>برنامه پخت ماکروویو</td><td>ROM (مشت)</td></tr>
+        <tr><td>۲</td><td>فایل Word که هنوز ذخیره نکرده‌ای</td><td>RAM (کف دست)</td></tr>
+        <tr><td>۳</td><td>دستورهای راه‌اندازی برد اصلی (BIOS)</td><td>ROM (مشت)</td></tr>
+        <tr><td>۴</td><td>ده تب باز مرورگر</td><td>RAM (کف دست)</td></tr>
+        <tr><td>۵</td><td>عکس‌هایی که روی هارد ذخیره کرده‌ای</td><td>هیچ‌کدام: هارد (دست روی سر)</td></tr>
+        <tr><td>۶</td><td>به‌روزرسانی BIOS توسط سازنده</td><td>ROM از نوع EEPROM (مشت)</td></tr>
+        <tr><td>۷</td><td>بازی‌ای که الآن در حال اجراست</td><td>RAM (کف دست)</td></tr>
+        <tr><td>۸</td><td><i>(چالشی)</i> برنامه لباسشویی، با اینکه می‌ماند، چرا هارد نیست؟</td><td>چون برای دستگاه‌های ثابت‌کار است و فقط کارخانه می‌نویسد، پس ROM</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="act"><p>(اگر چند نفر در مورد ۵ و ۸ اشتباه کردند، تذکر بده: «هم ROM هم هارد می‌مانند، ولی ROM فقط‌خواندنی است و برای برنامه‌های ثابت دستگاه، و هارد برای فایل‌های ماست.»)</p></div>
+
+  <h3>ب) «ردپای روشن‌شدن رایانه» <span class="time">۶ دقیقه</span></h3>
+  <div class="act"><p>(شش مرحله را به‌هم‌ریخته روی تخته بنویس و از شش نفر بخواه یکی‌یکی مرتبشان کنند.)</p></div>
+  <div class="board">
+    <span class="cap">روی تخته: مراحل به‌هم‌ریخته</span>
+    <p>برنامه در RAM اجرا می‌شود — دکمه روشن فشرده می‌شود — کاربر برنامه‌ای را باز می‌کند — سیستم‌عامل (<span class="en">OS</span>) از حافظه دائمی به RAM آورده می‌شود — فایل ذخیره شود ← از RAM به هارد منتقل می‌شود — BIOS یا UEFI سخت‌افزار را راه‌اندازی می‌کند</p>
+  </div>
+  <details>
+    <summary>ترتیب درست</summary>
+    <ol class="steps">
+      <li>دکمه روشن فشرده می‌شود.</li>
+      <li>BIOS یا UEFI سخت‌افزار را راه‌اندازی می‌کند.</li>
+      <li>سیستم‌عامل از حافظه دائمی به RAM آورده می‌شود.</li>
+      <li>کاربر برنامه‌ای را باز می‌کند.</li>
+      <li>برنامه در RAM اجرا می‌شود.</li>
+      <li>ذخیره: فایل از RAM به هارد منتقل می‌شود.</li>
+    </ol>
+  </details>
+  <div class="say"><p>آفرین. حالا که با هم یاد گرفتیم، نوبت کار گروهی است.</p></div>
+</section>
+
+<!-- ===================== INDEPENDENT ===================== -->
+<section class="stage" id="indep">
+  <h2>۵. تمرین مستقل <span class="time">دقیقه ۵۵ تا ۷۷</span></h2>
+  <div class="act"><p><b>گروه‌بندی:</b> ۷ گروه ۵نفره، ردیف‌به‌ردیف. هر گروه یک نفر را مسئول نوشتن و یک نفر را مسئول گزارش‌دادن انتخاب کند.</p></div>
+
+  <h3>بخش ۱: «شناسنامه ثابت‌افزار» <span class="time">۱۲ دقیقه: ۸ کار + ۴ گزارش</span></h3>
+  <div class="act"><p>(به هر گروه یک دستگاه بده؛ می‌توانی روی تخته بنویسی.)</p></div>
+  <div class="tablewrap">
+    <table class="groups">
+      <thead><tr><th>گروه</th><th>دستگاه</th></tr></thead>
+      <tbody>
+        <tr><td>۱</td><td>لپ‌تاپ (BIOS/UEFI)</td></tr>
+        <tr><td>۲</td><td>گوشی هوشمند (<span class="en">Smartphone</span>)</td></tr>
+        <tr><td>۳</td><td>لامپ هوشمند (اینترنت اشیا – <span class="en">IoT</span>)</td></tr>
+        <tr><td>۴</td><td>ساعت هوشمند یا گام‌شمار (<span class="en">Smartwatch / Pedometer</span>)</td></tr>
+        <tr><td>۵</td><td>مودم یا مسیریاب (<span class="en">Modem / Router</span>)</td></tr>
+        <tr><td>۶</td><td>ماکروویو</td></tr>
+        <tr><td>۷</td><td>لباسشویی</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="say">
+    <p>هر گروه روی کاغذش سه خط بنویسد: ۱) ثابت‌افزار (<span class="en">Firmware</span>) این دستگاه چه کاری می‌کند؟ ۲) اگر خراب شود چه می‌شود؟ ۳) آیا لازم است به‌روز شود؟ چرا؟ بعد از هشت دقیقه، هر گروه سی ثانیه گزارش می‌دهد.</p>
+  </div>
+  <div class="act"><p>(گروه‌های ۶ و ۷ در مورد سوم ممکن است گیر کنند؛ راهنمایی: «در ROM ساده فقط کارخانه می‌نویسد، پس به‌روزرسانی لازم ندارند.»)</p></div>
+
+  <h3>بخش ۲: «پیام رمزی» <span class="time">۱۰ دقیقه: ۸ کار + ۲ بررسی</span></h3>
+  <div class="act"><p>(جدول زیر را روی تخته بنویس. نسخه دیجیتال: همین جدول را در گروه بفرست.)</p></div>
+  <div class="board">
+    <span class="cap">روی تخته: جدول کدها</span>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>حرف (<span class="en">Character</span>)</th><th>الگوی بایت (<span class="en">Byte</span>)</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td class="bits-cell">01000001</td></tr>
+          <tr><td>B</td><td class="bits-cell">01000010</td></tr>
+          <tr><td>C</td><td class="bits-cell">01000011</td></tr>
+          <tr><td>D</td><td class="bits-cell">01000100</td></tr>
+          <tr><td>E</td><td class="bits-cell">01000101</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="say">
+    <p>هر گروه یک کلمه سه‌حرفی با این حرف‌ها بسازد، مثل CAB یا BED، و آن را به سه بایت تبدیل کند روی یک کاغذ. بعد کاغذ را به گروه کناری بدهد. گروه کناری باید آن را رمزگشایی کند و کلمه را پیدا کند.</p>
+    <p>چالش برای گروه‌های سریع: اگر به‌جای ۸ بیت فقط ۷ بیت داشتیم، چند حالت ممکن بود؟</p>
+  </div>
+  <div class="ask"><b>پاسخ چالش:</b> ۱۲۸</div>
+  <div class="act"><p>(در دو دقیقه آخر از ۲ گروه بخواه کلمه را بخوانند و درستی را با گروه فرستنده چک کنند.)</p></div>
+</section>
+
+<!-- ===================== WRAP-UP ===================== -->
+<section class="stage" id="wrap">
+  <h2>۶. جمع‌بندی و Exit Ticket <span class="time">دقیقه ۷۷ تا ۹۰</span></h2>
+
+  <h3>مرور شفاهی زنجیره‌ای <span class="time">۵ دقیقه</span></h3>
+  <div class="say">
+    <p>حالا داستان یک بار دیگر را با هم تعریف می‌کنیم، هر نفر یک جمله. من شروع می‌کنم: «وقتی دکمه روشن را می‌زنم...» نفر بعد ادامه بدهد.</p>
+  </div>
+  <div class="act"><p>(چند دانش‌آموز پشت سر هم زنجیره را ادامه می‌دهند: BIOS، سیستم‌عامل، RAM، ذخیره در هارد. اگر لازم شد، یک بار همان زنجیره روی تخته را اشاره کن. بعد از ۴ تا ۵ نفر، یک نفر هم برگردد به سؤال اول کلاس: چرا متن ذخیره‌نشده رفت و عکس‌ها ماندند؟)</p></div>
+
+  <h3>Exit Ticket <span class="time">۸ دقیقه</span></h3>
+  <div class="act"><p>(سه سؤال روی تخته بنویس. بچه‌ها روی برگه‌ای جواب دهند و موقع خروج تحویل دهند.)</p></div>
+
+  <p class="q">سؤال ۱ (تعریفی): RAM را تعریف کن و یک تفاوتش را با ROM بنویس.</p>
+  <details>
+    <summary>پاسخ صحیح</summary>
+    <p>RAM (<span class="en">Random Access Memory</span>) حافظه اصلیِ موقت و سریع است که سیستم‌عامل برای اجرای برنامه‌ها و نگهداری مقدارهای برنامه‌های در حال اجرا از آن استفاده می‌کند. تفاوت: RAM با قطع برق پاک می‌شود و قابل نوشتن است، اما ROM (<span class="en">Read Only Memory</span>) فقط‌خواندنی است و اطلاعاتش با قطع برق می‌ماند.</p>
+  </details>
+
+  <p class="q">سؤال ۲ (سناریومحور): رایانه‌ای هنگام کار خاموش می‌شود. سه چیز را در نظر بگیر: متن ذخیره‌نشده در Word، عکس‌های ذخیره‌شده روی هارد، و برنامه BIOS. هر کدام می‌ماند یا می‌رود؟ دلیل بیاور.</p>
+  <details>
+    <summary>پاسخ صحیح</summary>
+    <p>متن ذخیره‌نشده می‌رود چون در RAM بود و RAM موقت است. عکس‌ها می‌مانند چون روی حافظه دائمی (هارد) هستند. BIOS هم می‌ماند چون در ROM است و ثابت‌افزار (<span class="en">Firmware</span>) با قطع برق پاک نمی‌شود.</p>
+  </details>
+
+  <p class="q">سؤال ۳ (بایت): یک بایت چند بیت است و چند حالت مختلف می‌تواند داشته باشد؟ چرا؟</p>
+  <details>
+    <summary>پاسخ صحیح</summary>
+    <p>۸ بیت (<span class="en">Bit</span>) و ۲۵۶ حالت. چون هر بیت دو حالت (صفر یا یک) دارد و هشت بیت کنار هم <span dir="ltr">2×2×2×2×2×2×2×2 = 256</span> حالت می‌سازد.</p>
+  </details>
+
+  <div class="act"><p>(پایان کلاس: «تکلیف جلسه بعد: ارائه تحقیق‌های بردهای اصلی را آماده کنید که اول جلسه بعد می‌شنویم.»)</p></div>
+</section>
+
+<!-- ===================== NEXT SESSION HANDOFF ===================== -->
+<section class="stage" id="next">
+  <h2>۷. خلاصه برای پیوست جلسه بعد</h2>
+  <blockquote class="handoff" id="handoff">
+    در جلسه سوم، ROM (فقط‌خواندنی، نوشتن در کارخانه، ثابت‌افزار)، EPROM/EEPROM (قابل برنامه‌ریزی مجدد برای به‌روزرسانی)، BIOS و UEFI (راه‌اندازی اولیه سخت‌افزار و بارگذاری سیستم‌عامل) و کاربردهای ثابت‌افزار (گوشی، IoT، گجت‌های ورزشی، مودم/مسیریاب)، سپس RAM (حافظه اصلی موقت و سریع، «میز کار»، سیستم‌عامل از آن برای اجرای برنامه‌ها استفاده می‌کند و برای ذخیره دائم به هارد منتقل می‌کند)، و بیت (۰ یا ۱) و بایت (۸ بیت، ۲۵۶ حالت، کد کاراکتر مثل A=01000001) تدریس شد. جدول مقایسه ROM/RAM/هارد و زنجیره روشن‌شدن رایانه هم کار شد. عمداً به تعویق افتاد: جزئیات فنی طرز کار EPROM/EEPROM، و از جلسات قبل «ترانزیستور چیست»، تاریخچه IT ایران در دهه‌های ۱۳۷۰–۱۳۸۰ و ارائه تحقیق دانش‌آموزان درباره بردهای اصلی (به دانش‌آموزان گفته شده برای ابتدای جلسه چهارم آماده کنند).
+  </blockquote>
+  <button class="copybtn" type="button" id="copybtn">کپی خلاصه</button>
+</section>
+
+</main>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copybtn');
+    var src = document.getElementById('handoff');
+    if (!btn || !src) return;
+    btn.addEventListener('click', function () {
+      var text = src.innerText.trim();
+      function done(ok) {
+        btn.textContent = ok ? 'کپی شد' : 'کپی نشد؛ متن را دستی انتخاب کنید';
+        setTimeout(function () { btn.textContent = 'کپی خلاصه'; }, 2000);
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+        } else {
+          var r = document.createRange(); r.selectNodeContents(src);
+          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+          done(document.execCommand('copy'));
+        }
+      } catch (e) { done(false); }
+    });
+  })();
+</script>
+</body>
+</html>
