@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GPU؛ رنگ‌کردن پوستر با ۳۵ نفر</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f6f5f1;--ink:#1b1d24;--mut:#5d6270;--card:#fff;--line:#d9d7cf;--r:#e5484d;--g:#2fa866;--b:#3b6fe0;--on:#e5484d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171c;--ink:#eceae4;--mut:#9aa0ae;--card:#1e2128;--line:#343843;--on:#ff6b70}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;line-height:1.9;font-size:17px}
+main{max-width:720px;margin:0 auto;padding:20px 18px 60px}
+h1{font-size:clamp(30px,8vw,48px);font-weight:900;line-height:1.3;margin:24px 0 6px}
+h1 i{font-style:normal;background:linear-gradient(90deg,var(--r) 0 33%,var(--g) 33% 66%,var(--b) 66%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:24px;font-weight:900;margin:0 0 8px}
+p{margin:6px 0}.mut{color:var(--mut);font-size:15px}
+section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px;margin:22px 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+button{font:inherit;font-weight:700;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:12px;padding:6px 16px;cursor:pointer}
+button:hover{background:var(--ink);color:var(--bg)}button:focus-visible,.cell:focus-visible{outline:3px solid var(--b);outline-offset:2px}
+button.p{background:var(--ink);color:var(--bg)}
+.grid{display:grid;gap:3px;direction:ltr;margin:12px auto;width:max-content;max-width:100%}
+.cell{width:var(--s,44px);height:var(--s,44px);border-radius:5px;background:var(--bg);border:1px solid var(--line);cursor:pointer;padding:0;transition:background .12s}
+.cell.on{background:var(--on);border-color:var(--on)}
+.cell.t{border:1px dashed var(--mut)}
+.cell.bad{animation:sh .25s}@keyframes sh{50%{transform:translateX(4px)}}
+canvas{width:100%;max-width:360px;aspect-ratio:1;image-rendering:pixelated;display:block;margin:10px auto;border-radius:10px;border:1px solid var(--line)}
+input[type=range]{width:100%;max-width:360px;direction:ltr}
+.big{font-size:30px;font-weight:900}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center}
+.res div{border:1px solid var(--line);border-radius:12px;padding:8px 4px}.res b{display:block;font-size:22px}
+.opt{display:block;width:100%;text-align:right;margin:8px 0;font-weight:400}
+.opt.ok{background:var(--g);border-color:var(--g);color:#fff}.opt.no{background:var(--r);border-color:var(--r);color:#fff}
+.fb{min-height:30px;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.two{grid-template-columns:1fr}}
+.two div{border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>پردازنده گرافیکی؛ <i>GPU</i></h1>
+<p class="mut">چهار بازی کوچک، هفت دقیقه. فقط بخوانید نه؛ خودتان امتحان کنید.</p>
+
+<section id="s1">
+<h2>۱) نقطه‌های صفحه را ببینید</h2>
+<p>صفحه گوشی از نقطه‌های رنگی ریز ساخته شده؛ هر کدام یک <b>پیکسل</b> است، مثل کاشی تک‌رنگ. اسلایدر را بکشید تا کاشی‌ها درشت شوند.</p>
+<canvas id="cv" width="360" height="360" aria-label="تصویر پیکسلی"></canvas>
+<div class="row"><input id="rs" type="range" min="3" max="64" value="8" aria-label="تعداد پیکسل"><span id="rl" class="big"></span></div>
+<p class="mut">حالا خودتان کاشی بچینید: روی خانه‌ها بزنید و شکل بسازید.</p>
+<div class="grid" id="g5" style="--s:46px;grid-template-columns:repeat(5,auto)"></div>
+<p>رنگ‌شده: <b id="c5">۰</b> از ۲۵ پیکسل. یک صفحه معمولی حدود <b>۲ میلیون</b> پیکسل دارد و در بازی ده‌ها بار در ثانیه همه‌شان دوباره رنگ می‌شوند!</p>
+</section>
+
+<section id="s2">
+<h2>۲) مسابقه: یک نفر یا هفت نفر؟</h2>
+<p>باید قلب ۷×۸ را پر کنید (۴۰ خانه). خانه‌های خط‌چین را پر کنید. سه حالت را امتحان کنید و زمان‌ها را مقایسه کنید.</p>
+<div class="row">
+<button class="p" id="bm">من تنها (دستی)</button>
+<button id="b1">یک هسته (خودکار)</button>
+<button id="b7">۷ هسته همزمان</button>
+</div>
+<div class="grid" id="g8" style="--s:34px;grid-template-columns:repeat(8,auto)"></div>
+<div class="res"><div>دستی<b id="t0">—</b></div><div>یک هسته<b id="t1">—</b></div><div>۷ هسته<b id="t7">—</b></div></div>
+<p class="fb" id="fb2"></p>
+<p class="mut">هر هسته برای رنگ‌کردن یک خانه ۰٫۲ ثانیه وقت لازم دارد. فرق از کجا آمد؟ هر سطر مستقل است، پس هسته‌ها منتظر هم نمی‌مانند.</p>
+</section>
+
+<section id="s3">
+<h2>۳) GPU کجاست؟</h2>
+<div class="two">
+<div><b>داخل پردازنده</b><p class="mut">برای کارهای سبک مثل وب و ویدیو؛ حافظه را با بقیه سیستم شریک است.</p></div>
+<div><b>روی کارت گرافیک</b><p class="mut">در اسلات PCI-Express (جلسه پیش) قرار می‌گیرد و حافظه اختصاصی پرسرعت دارد، معمولاً سریع‌تر از حافظه اصلی.</p></div>
+</div>
+<p>هر دو از میلیاردها کلید ریز به نام <b>ترانزیستور</b> ساخته شده‌اند. جلسه بعد!</p>
+</section>
+
+<section id="s4">
+<h2>۴) سؤال پایانی</h2>
+<p>چرا GPU برای ساخت تصویر از یک هسته قوی بهتر است؟</p>
+<div id="q"></div><p class="fb" id="fb4"></p>
+</section>
+</main>
+<script>
+const fa=n=>Number(n).toLocaleString('fa-IR');
+const $=id=>document.getElementById(id);
+/* 1: pixelation */
+const cv=$('cv'),cx=cv.getContext('2d'),src=document.createElement('canvas');src.width=src.height=180;
+(function(){const s=src.getContext('2d');let g=s.createLinearGradient(0,0,0,180);g.addColorStop(0,'#3b6fe0');g.addColorStop(1,'#ffd9a0');s.fillStyle=g;s.fillRect(0,0,180,180);
+s.fillStyle='#ffb020';s.beginPath();s.arc(125,60,28,0,7);s.fill();s.fillStyle='#2fa866';s.beginPath();s.ellipse(50,190,120,70,0,0,7);s.fill();
+s.fillStyle='#1f7a48';s.beginPath();s.ellipse(150,200,100,50,0,0,7);s.fill();s.fillStyle='#e5484d';s.fillRect(40,100,6,26);s.beginPath();s.arc(43,98,10,0,7);s.fill()})();
+function draw(n){const t=document.createElement('canvas');t.width=t.height=n;const c=t.getContext('2d');c.imageSmoothingEnabled=true;c.drawImage(src,0,0,n,n);
+cx.imageSmoothingEnabled=false;cx.clearRect(0,0,360,360);cx.drawImage(t,0,0,360,360);$('rl').textContent=fa(n*n)+' پیکسل'}
+$('rs').oninput=e=>draw(+e.target.value);draw(8);
+function mk(el,r,c,fn){el.innerHTML='';const a=[];for(let i=0;i<r;i++)for(let j=0;j<c;j++){const b=document.createElement('button');b.className='cell';b.setAttribute('aria-label','خانه '+fa(i+1)+'،'+fa(j+1));el.appendChild(b);a.push(b);b.onclick=()=>fn(b,i,j)}return a}
+mk($('g5'),5,5,(b)=>{b.classList.toggle('on');$('c5').textContent=fa($('g5').querySelectorAll('.on').length)});
+/* 2: race */
+const H=[[2,3,6,7],[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8],[2,3,4,5,6,7],[3,4,5,6],[4,5]];
+const T=new Set();H.forEach((r,i)=>r.forEach(c=>T.add(i*8+c-1)));
+let cells=[],mode='m',busy=false,t0=0,timers=[],filled=0,tick;
+cells=mk($('g8'),7,8,(b,i,j)=>{if(mode!=='m'||!busy)return;const k=i*8+j;
+ if(!T.has(k)||b.classList.contains('on')){b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),250);return}
+ b.classList.add('on');if(++filled===T.size)done()});
+function reset(m){timers.forEach(clearTimeout);timers=[];clearInterval(tick);mode=m;filled=0;busy=true;cells.forEach((c,k)=>{c.classList.remove('on');c.classList.toggle('t',T.has(k))});$('fb2').textContent='';t0=performance.now()}
+function done(){busy=false;clearInterval(tick);const s=(performance.now()-t0)/1000;$('t'+(mode==='m'?0:mode)).textContent=fa(s.toFixed(1))+' ثانیه';
+ const a=parseFloat(s),m=$('t7').textContent!=='—'&&$('t1').textContent!=='—';$('fb2').textContent=m?'دیدید؟ تقسیم کار بین هسته‌ها زمان را چند برابر کم کرد.':'حالا حالت بعدی را هم امتحان کنید.'}
+$('bm').onclick=()=>{reset('m');$('fb2').textContent='شروع شد! خانه‌های خط‌چین را پر کنید.'};
+$('b1').onclick=()=>{reset('1');const l=[...T].sort((a,b)=>a-b);l.forEach((k,n)=>timers.push(setTimeout(()=>{cells[k].classList.add('on');if(n===l.length-1)done()},(n+1)*200)))};
+$('b7').onclick=()=>{reset('7');let mx=0;H.forEach((r,i)=>r.forEach((c,n)=>{mx=Math.max(mx,n);timers.push(setTimeout(()=>{cells[i*8+c-1].classList.add('on');if(++filled===T.size)done()},(n+1)*200))}))};
+/* 4: quiz */
+const O=[['چون GPU هسته‌های بسیار قوی‌تر از CPU دارد',0],['چون تصویر به بخش‌های کوچک تقسیم می‌شود و هسته‌ها همزمان کار می‌کنند',1],['چون GPU فقط به برق کمتری نیاز دارد',0],['چون پیکسل‌ها باید یکی‌یکی و به ترتیب ساخته شوند',0]];
+O.forEach(([t,ok])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{b.classList.add(ok?'ok':'no');$('fb4').textContent=ok?'درست! کاری که به بخش‌های مستقل تقسیم شود، مثل پیکسل‌ها، مال GPU است.':'نه؛ به مسابقه قلب فکر کنید و دوباره بزنید.'};$('q').appendChild(b)});
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>گذرگاه (Bus)</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f7f4;--card:#fff;--ink:#1f2933;--mute:#6b7680;--line:#e3e5e0;--a:#2f6fed;--d:#16a37f;--c:#e08a1e;--shadow:0 1px 3px rgba(0,0,0,.06);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1d2226;--ink:#e8ecef;--mute:#9aa5ae;--line:#2c333a;--a:#6b9bff;--d:#3cc9a3;--c:#f0a74a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171a;--card:#1d2226;--ink:#e8ecef;--mute:#9aa5ae;--line:#2c333a;--a:#6b9bff;--d:#3cc9a3;--c:#f0a74a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;line-height:1.9;font-size:16px}
+main{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 2px;font-weight:800}
+.sub{color:var(--mute);font-size:14px;margin:0 0 16px}
+nav{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:16px}
+nav button{flex:1;border:0;background:transparent;color:var(--mute);font:inherit;font-size:14px;padding:8px 4px;border-radius:9px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{font-size:16px;margin:0 0 4px}
+.card p{margin:0}
+.tag{display:inline-block;font-size:12px;padding:0 10px;border-radius:99px;color:#fff;margin-bottom:4px}
+.row{display:flex;align-items:center;gap:8px;justify-content:center;margin:14px 0;flex-wrap:wrap}
+.pill{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-size:14px}
+.arrow{color:var(--mute)}
+.btn{font:inherit;border:0;border-radius:10px;padding:8px 18px;background:var(--a);color:#fff;cursor:pointer;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:default}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px;align-items:center}
+.seg span{font-size:13px;color:var(--mute);min-width:56px}
+.seg button{font:inherit;font-size:14px;padding:4px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* diagram */
+.dg{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.node{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:8px;text-align:center;font-weight:600;transition:.25s}
+.devs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.node.hot{border-color:var(--ink);box-shadow:0 0 0 3px var(--line)}
+.lane{position:relative;border-radius:10px;padding:8px 12px;border:1.5px dashed var(--line);color:var(--mute);font-size:14px;transition:.25s;display:flex;justify-content:space-between;align-items:center;min-height:46px}
+.lane b{font-weight:600}
+.lane.on{border-style:solid;color:#fff}
+.lane.A.on{background:var(--a);border-color:var(--a)}
+.lane.D.on{background:var(--d);border-color:var(--d)}
+.lane.C.on{background:var(--c);border-color:var(--c)}
+.msg{min-height:68px;font-size:15px}
+.steps{display:flex;gap:6px;justify-content:center;margin:8px 0}
+.steps i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.steps i.on{background:var(--ink)}
+.opt{display:block;width:100%;text-align:right;font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;margin-top:8px;cursor:pointer}
+.opt.ok{border-color:var(--d);background:color-mix(in srgb,var(--d) 15%,var(--card))}
+.opt.bad{border-color:#d64545;background:color-mix(in srgb,#d64545 12%,var(--card))}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>گذرگاه (Bus)</h1>
+<p class="sub">مفهوم ۴ · حدود ۴ دقیقه</p>
+
+<nav role="tablist" id="tabs">
+<button role="tab" aria-selected="true" data-t="t1">ایده</button>
+<button role="tab" aria-selected="false" data-t="t2">سه مسیر</button>
+<button role="tab" aria-selected="false" data-t="t3">شبیه‌ساز</button>
+<button role="tab" aria-selected="false" data-t="t4">بیندیشیم</button>
+</nav>
+
+<section id="t1" class="on">
+<div class="card">
+<p>از خانه تا مدرسه از خیابان می‌روید. بین اجزای رایانه هم راه‌هایی هست که سیگنال‌های داده و دستور از آن‌ها عبور می‌کنند:</p>
+<p style="font-size:20px;font-weight:800;text-align:center;margin:10px 0">گذرگاه</p>
+</div>
+<div class="row">
+<span class="pill">🏠 خانه</span><span class="arrow">←</span><span class="pill">🛣️ خیابان</span><span class="arrow">←</span><span class="pill">🏫 مدرسه</span>
+</div>
+<div class="row">
+<span class="pill">🧠 پردازنده</span><span class="arrow">←</span><span class="pill">🛣️ گذرگاه</span><span class="arrow">←</span><span class="pill">💾 حافظه</span>
+</div>
+<p class="sub" style="text-align:center">همان‌طور که خیابان خانه و مدرسه را وصل می‌کند، گذرگاه هم قطعات رایانه را به هم وصل می‌کند.</p>
+</section>
+
+<section id="t2">
+<div class="card">
+<span class="tag" style="background:var(--a)">گذرگاه آدرس</span>
+<h2>می‌گوید «کجا؟»</h2>
+<p>آدرس خانه‌های حافظه را می‌فرستد، مثل پلاک خانه برای پیک موتوری. فقط از پردازنده به سمت حافظه می‌رود.</p>
+</div>
+<div class="card">
+<span class="tag" style="background:var(--d)">گذرگاه داده</span>
+<h2>می‌گوید «چه چیزی؟»</h2>
+<p>خود داده را جابه‌جا می‌کند، مثل بسته‌ای که پیک تحویل می‌دهد. هر دو جهت دارد: هم خواندن، هم نوشتن.</p>
+</div>
+<div class="card">
+<span class="tag" style="background:var(--c)">گذرگاه کنترل</span>
+<h2>می‌گوید «چه کاری؟»</h2>
+<p>دستورها مثل «بخوان» یا «بنویس» را می‌رساند.</p>
+</div>
+<p class="sub" style="text-align:center">در تب بعد خودتان آن‌ها را در حال کار ببینید.</p>
+</section>
+
+<section id="t3">
+<div class="seg" id="sTarget"><span>مقصد:</span>
+<button class="on" data-v="mem">💾 حافظه</button><button data-v="gpu">🖥️ کارت گرافیک</button></div>
+<div class="seg" id="sOp"><span>کار:</span>
+<button class="on" data-v="read">خواندن</button><button data-v="write">نوشتن</button></div>
+
+<div class="dg">
+<div class="node" id="nCpu">🧠 پردازنده</div>
+<div class="lane A" id="lA"><b>گذرگاه آدرس</b><span id="vA">—</span></div>
+<div class="lane D" id="lD"><b>گذرگاه داده</b><span id="vD">—</span></div>
+<div class="lane C" id="lC"><b>گذرگاه کنترل</b><span id="vC">—</span></div>
+<div class="devs">
+<div class="node" id="nMem">💾 حافظه</div>
+<div class="node" id="nGpu">🖥️ کارت گرافیک</div>
+</div>
+</div>
+
+<div class="steps" id="dots"><i></i><i></i><i></i></div>
+<div class="card msg" id="msg">با دکمه زیر شروع کنید.</div>
+<div class="row" style="margin-top:0">
+<button class="btn" id="next">شروع</button>
+<button class="btn ghost" id="reset">از نو</button>
+</div>
+</section>
+
+<section id="t4">
+<div class="card">
+<h2>سؤال</h2>
+<p>اگر گذرگاه نبود چه می‌شد؟</p>
+<button class="btn ghost" id="show" style="margin-top:10px">نمایش پاسخ</button>
+<p id="ans" class="hide" style="margin-top:10px"><b>اجزا نمی‌توانستند با هم ارتباط بگیرند.</b> پردازنده نه می‌توانست از حافظه چیزی بخواند، نه به کارت گرافیک چیزی بفرستد.</p>
+</div>
+
+<div class="card">
+<h2>خودتان را بسنجید</h2>
+<p id="qt"></p>
+<div id="qo"></div>
+</div>
+
+<div class="card" style="background:var(--bg)">
+<h2>گذار به مفهوم بعد</h2>
+<p>یک پردازنده دیگر هم هست که فقط روی تصویر کار می‌کند. 🖼️ در درس بعد با آن آشنا می‌شویم.</p>
+</div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));
+  scrollTo({top:0});
+});
+
+let target='mem',op='read',step=0;
+function seg(id,fn){document.querySelectorAll(id+' button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(id+' button').forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);reset();});}
+seg('#sTarget',v=>target=v);seg('#sOp',v=>op=v);
+
+function reset(){
+  step=0;
+  ['A','D','C'].forEach(k=>{$('#l'+k).classList.remove('on');$('#v'+k).textContent='—';});
+  ['nCpu','nMem','nGpu'].forEach(i=>$('#'+i).classList.remove('hot'));
+  document.querySelectorAll('#dots i').forEach(i=>i.classList.remove('on'));
+  $('#msg').textContent='با دکمه زیر شروع کنید.';
+  $('#next').textContent='شروع';$('#next').disabled=false;
+}
+function go(){
+  const name=target==='mem'?'حافظه':'کارت گرافیک';
+  const addr=target==='mem'?'۰x۲A۴':'۰xF۰۰۱';
+  const dat=target==='mem'?'۱۰۱۱':'پیکسل‌ها';
+  ['A','D','C'].forEach(k=>$('#l'+k).classList.remove('on'));
+  step++;
+  document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<step));
+  $('#nCpu').classList.add('hot');
+  $(target==='mem'?'#nMem':'#nGpu').classList.add('hot');
+  if(step===1){
+    $('#lA').classList.add('on');$('#vA').textContent='↓ '+addr;
+    $('#msg').innerHTML='<b>مرحله ۱ · آدرس:</b> پردازنده روی گذرگاه آدرس، نشانی '+name+' را می‌فرستد (مثل پلاک خانه). این مسیر فقط یک‌طرفه است.';
+    $('#next').textContent='مرحله بعد';
+  }else if(step===2){
+    $('#lC').classList.add('on');$('#vC').textContent='↓ '+(op==='read'?'بخوان':'بنویس');
+    $('#msg').innerHTML='<b>مرحله ۲ · کنترل:</b> دستور «'+(op==='read'?'بخوان':'بنویس')+'» از راه گذرگاه کنترل می‌رسد.';
+  }else{
+    $('#lD').classList.add('on');
+    $('#vD').textContent=op==='read'?'↑ '+dat:'↓ '+dat;
+    $('#msg').innerHTML='<b>مرحله ۳ · داده:</b> '+(op==='read'
+      ?name+' داده را روی گذرگاه داده می‌گذارد و به پردازنده برمی‌گرداند. ↑'
+      :'پردازنده داده را روی گذرگاه داده می‌گذارد و به '+name+' می‌فرستد. ↓')+' گذرگاه داده دوطرفه است.';
+    $('#next').textContent='تمام شد ✓';$('#next').disabled=true;
+  }
+}
+$('#next').onclick=go;$('#reset').onclick=reset;
+$('#show').onclick=()=>{$('#ans').classList.remove('hide');$('#show').classList.add('hide');};
+
+const qs=[
+ {q:'کدام گذرگاه نشانی خانهٔ حافظه را می‌فرستد؟',o:['آدرس','داده','کنترل'],a:0},
+ {q:'کدام گذرگاه هم به سمت حافظه می‌رود و هم از آن برمی‌گردد؟',o:['آدرس','داده'],a:1}
+];
+let qi=0;
+function showQ(){
+  if(qi>=qs.length){$('#qt').textContent='آفرین! هر دو را درست پاسخ دادید. 🎉';$('#qo').innerHTML='';return;}
+  const q=qs[qi];$('#qt').textContent=q.q;$('#qo').innerHTML='';
+  q.o.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;
+    b.onclick=()=>{if(i===q.a){b.classList.add('ok');setTimeout(()=>{qi++;showQ();},700);}else b.classList.add('bad');};
+    $('#qo').appendChild(b);});
+}
+showQ();
+</script>
+</body>
+</html>
