@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Inside - آموزش تعاملی معماری پردازنده</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Font for clean Persian typography -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+        .tab-btn.active {
+            border-bottom-color: #3b82f6;
+            color: #60a5fa;
+            font-weight: 700;
+            background-color: #1e293b;
+        }
+        /* Custom scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-blue-500/20">
+                    CPU
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-100 leading-tight">معماری پردازنده و حافظه</h1>
+                    <p class="text-xs text-slate-400">یادگیری تعاملی در ۲۱ دقیقه</p>
+                </div>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-blue-950/80 text-blue-300 border border-blue-800/50">
+                گام‌به‌گام
+            </span>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="max-w-4xl mx-auto px-2 flex border-t border-slate-800/80 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('concept1')" id="tab-concept1" class="tab-btn active flex-1 min-w-[120px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-blue-400 transition-all duration-200 flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                <span>۱. پردازنده و CU</span>
+            </button>
+            <button onclick="switchTab('concept2')" id="tab-concept2" class="tab-btn flex-1 min-w-[120px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-blue-400 transition-all duration-200 flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <span>۲. واحد ALU</span>
+            </button>
+            <button onclick="switchTab('concept3')" id="tab-concept3" class="tab-btn flex-1 min-w-[120px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-blue-400 transition-all duration-200 flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <span>۳. ثبات و Cache</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ==================== CONCEPT 1: CU & CPU ==================== -->
+        <section id="content-concept1" class="space-y-6">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-5 sm:p-6 text-white shadow-lg shadow-blue-900/20 border border-blue-600/30">
+                <div class="flex items-center justify-between gap-4 mb-2">
+                    <span class="text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md">مفهوم اول</span>
+                    <span class="text-xs opacity-90 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        زمان پیشنهادی: ۷ دقیقه
+                    </span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold">پردازنده (CPU) و واحد کنترل (CU)</h2>
+                <p class="text-sm text-blue-200 mt-1">مدیریت و هدایت تمام عملیات‌های سیستم در یک نگاه</p>
+            </div>
+
+            <!-- Visual Metaphor Section -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-sm">
+                <h3 class="font-bold text-slate-100 text-base mb-3 flex items-center gap-2">
+                    <span class="text-lg">🍳</span> تشبیه ساده: رایانه مثل یک آشپزخانه است!
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <span class="text-xs text-slate-400 font-bold block mb-1">ورودی</span>
+                        <p class="font-semibold text-slate-200">کاربر = مشتری</p>
+                        <p class="text-xs text-slate-400 mt-1">سفارش غذا را می‌دهد.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <span class="text-xs text-slate-400 font-bold block mb-1">دستورالعمل</span>
+                        <p class="font-semibold text-slate-200">نرم‌افزار = برگه دستور پخت</p>
+                        <p class="text-xs text-slate-400 mt-1">مراحل کار در آن نوشته شده.</p>
+                    </div>
+                    <div class="bg-blue-950/60 p-3.5 rounded-xl border border-blue-800/60 text-blue-100">
+                        <span class="text-xs text-blue-400 font-bold block mb-1">پردازشگر</span>
+                        <p class="font-bold text-blue-300">پردازنده = سرآشپز اصلی</p>
+                        <p class="text-xs text-blue-200/80 mt-1">ایمیل، فیلم و همه‌چیز از دست او می‌گذرد.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Diagram Simulation -->
+            <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-inner">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-semibold text-slate-300">نمای داخلی پردازنده (روی اجزا کلیک کنید)</h3>
+                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded border border-slate-700">گذرگاه (Bus) = مسیر ارتباطی</span>
+                </div>
+                <div class="border-2 border-dashed border-slate-700 rounded-xl p-4 relative bg-slate-950/80">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div onclick="showDetail('cu')" class="cursor-pointer bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/50 p-3 rounded-lg text-center transition-all">
+                            <span class="text-xs text-blue-400 font-bold block">واحد کنترل</span>
+                            <span class="text-lg font-bold text-white">CU</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">(مدیر و فرمانده)</span>
+                        </div>
+                        <div onclick="showDetail('alu')" class="cursor-pointer bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/50 p-3 rounded-lg text-center transition-all">
+                            <span class="text-xs text-emerald-400 font-bold block">واحد محاسبه و منطق</span>
+                            <span class="text-lg font-bold text-white">ALU</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">(ماشین‌حساب)</span>
+                        </div>
+                    </div>
+                    <!-- Bus line indicator -->
+                    <div class="w-full h-2 bg-gradient-to-r from-blue-500 via-amber-500 to-emerald-500 rounded-full my-2 flex items-center justify-center">
+                        <span class="text-[9px] bg-slate-900 px-2 text-slate-300 rounded-full border border-slate-700">گذرگاه (BUS)</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div onclick="showDetail('reg')" class="cursor-pointer bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/50 p-3 rounded-lg text-center transition-all">
+                            <span class="text-xs text-amber-400 font-bold block">ثبات‌ها</span>
+                            <span class="text-base font-bold text-white">Registers</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">(حافظه دم‌دست)</span>
+                        </div>
+                        <div onclick="showDetail('cache')" class="cursor-pointer bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/50 p-3 rounded-lg text-center transition-all">
+                            <span class="text-xs text-purple-400 font-bold block">حافظه پنهان</span>
+                            <span class="text-base font-bold text-white">Cache</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">(حافظه سریع)</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="cpu-detail-box" class="mt-4 p-3 bg-slate-800 rounded-lg text-xs text-slate-300 min-h-[50px] flex items-center border border-slate-700">
+                    👈 روی هرکدام از بخش‌های بالا کلیک کنید تا وظیفه‌اش را ببینید.
+                </div>
+            </div>
+
+            <!-- CU 3-Step Interactive Process -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-sm">
+                <h3 class="font-bold text-slate-100 text-base mb-2">وظیفه اصلی واحد کنترل (CU) چیست؟</h3>
+                <p class="text-xs text-slate-400 mb-4">
+                    CU خودش غذا نمی‌پزد (محاسبه نمی‌کند)، بلکه <strong>مدیر</strong> است و ۳ کار اصلی انجام می‌دهد:
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 hover:border-blue-500 transition-all">
+                        <div class="w-6 h-6 rounded-full bg-blue-900/80 text-blue-300 font-bold text-xs flex items-center justify-center mb-2 border border-blue-700">۱</div>
+                        <h4 class="font-bold text-sm text-slate-200">۱. واکشی (Fetch)</h4>
+                        <p class="text-xs text-slate-400 mt-1">آوردن دستور از حافظه به داخل پردازنده (مثل برداشتن دستور پخت از قفسه).</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 hover:border-blue-500 transition-all">
+                        <div class="w-6 h-6 rounded-full bg-blue-900/80 text-blue-300 font-bold text-xs flex items-center justify-center mb-2 border border-blue-700">۲</div>
+                        <h4 class="font-bold text-sm text-slate-200">۲. رمزگشایی (Decode)</h4>
+                        <p class="text-xs text-slate-400 mt-1">فهمیدن دستور و تحلیل آن (فهمیدن اینکه دستور چیست و چه چیزی نیاز دارد).</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 hover:border-blue-500 transition-all">
+                        <div class="w-6 h-6 rounded-full bg-blue-900/80 text-blue-300 font-bold text-xs flex items-center justify-center mb-2 border border-blue-700">۳</div>
+                        <h4 class="font-bold text-sm text-slate-200">۳. ارجاع (Execute)</h4>
+                        <p class="text-xs text-slate-400 mt-1">فرستادن دستور به واحد مربوطه (مثلاً فرستادن کار ریاضی به ALU).</p>
+                    </div>
+                </div>
+
+                <!-- Definition Callout -->
+                <div class="mt-4 p-3.5 bg-amber-950/40 rounded-xl border border-amber-800/50 text-amber-200 text-xs sm:text-sm leading-relaxed">
+                    <strong>📌 تعریف CU:</strong> بخشی از پردازنده است که دستورها را <strong>واکشی</strong>، <strong>رمزگشایی</strong> و <strong>تحلیل</strong> می‌کند و به واحد مربوطه می‌فرستد.
+                </div>
+            </div>
+
+            <!-- Concept 1 Check Quiz -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+                <h4 class="font-bold text-blue-400 text-sm mb-3 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    سؤال تثبیت یادگیری
+                </h4>
+                <p class="text-sm text-slate-300 mb-3">اولین کار واحد کنترل (CU) با رسیدن یک دستور جدید چیست؟</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                    <button onclick="checkQuiz1('a')" class="quiz1-btn p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all">الف) انجام محاسبه</button>
+                    <button onclick="checkQuiz1('b')" class="quiz1-btn p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all">ب) واکشی (Fetch)</button>
+                    <button onclick="checkQuiz1('c')" class="quiz1-btn p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all">ج) ذخیره در هارد</button>
+                </div>
+                <div id="quiz1-feedback" class="mt-3 text-xs font-semibold hidden"></div>
+            </div>
+
+            <!-- Transition Footer -->
+            <div class="flex justify-between items-center pt-2">
+                <p class="text-xs text-slate-400">CU فهمید دستور «۱۲ + ۹» است. حالا چه کسی جمع می‌کند؟</p>
+                <button onclick="switchTab('concept2')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-xl transition-all shadow-md shadow-blue-600/20">
+                    رفتن به مفهوم ۲ ←
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== CONCEPT 2: ALU ==================== -->
+        <section id="content-concept2" class="space-y-6 hidden">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-2xl p-5 sm:p-6 text-white shadow-lg shadow-emerald-900/20 border border-emerald-600/30">
+                <div class="flex items-center justify-between gap-4 mb-2">
+                    <span class="text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md">مفهوم دوم</span>
+                    <span class="text-xs opacity-90 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        زمان پیشنهادی: ۵ دقیقه
+                    </span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold">واحد محاسبه و منطق (ALU)</h2>
+                <p class="text-sm text-emerald-200 mt-1">ماشین‌حساب واقعی و مغز ریاضی رایانه</p>
+            </div>
+
+            <!-- Concept Explanation -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-sm space-y-4">
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    سر امتحان ریاضی چه روی میز دارید؟ <strong>ماشین‌حساب!</strong>
+                    واحد <strong>ALU</strong> دقیقا همان ماشین‌حساب داخل پردازنده است. داده‌ها را از «ثبات» می‌گیرد، عملیات را انجام می‌دهد و نتیجه را دوباره روی «ثبات» می‌گذارد.
+                </p>
+
+                <!-- 2 Main Functions Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-emerald-950/40 p-4 rounded-xl border border-emerald-800/50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="p-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold">۱</span>
+                            <h3 class="font-bold text-emerald-300 text-sm">عملیات ریاضی (Arithmetic)</h3>
+                        </div>
+                        <p class="text-xs text-emerald-100/80 leading-relaxed">
+                            انجام محاسبات ۴ عمل اصلی مثل جمع، تفریق، ضرب و تقسیم.
+                            <br><span class="text-[11px] text-emerald-400 font-semibold">مثال: محاسبة ۱۲ + ۹</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-teal-950/40 p-4 rounded-xl border border-teal-800/50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="p-1.5 bg-teal-600 text-white rounded-lg text-xs font-bold">۲</span>
+                            <h3 class="font-bold text-teal-300 text-sm">عملیات منطقی (Logical)</h3>
+                        </div>
+                        <p class="text-xs text-teal-100/80 leading-relaxed">
+                            مقایسه دو چیز با هم (بزرگتر، کوچکتر، مساوی).
+                            <br><span class="text-[11px] text-teal-400 font-semibold">مثال: آیا رمز زده شده برابر رمز ذخیره‌شده است؟ آیا نمره ≥ ۱۰ است؟</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive ALU Simulator -->
+            <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-lg">
+                <h3 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    شبیه‌ساز تعاملی ALU (امتحان کنید!)
+                </h3>
+                
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <!-- Step Indicator -->
+                    <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                        <span>۱. داده از ثبات خوانده می‌شود</span>
+                        <span>۲. ALU محاسبه می‌کند</span>
+                        <span>۳. ذخیره در ثبات</span>
+                    </div>
+
+                    <!-- Calculator Inputs -->
+                    <div class="grid grid-cols-3 gap-2 items-center text-center">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">عدد اول (ثبات A)</label>
+                            <input type="number" id="alu-num1" value="12" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-emerald-400 font-bold focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">نوع عملیات ALU</label>
+                            <select id="alu-op" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white focus:outline-none focus:border-emerald-500">
+                                <option value="+">جمع (+)</option>
+                                <option value="-">تفریق (-)</option>
+                                <option value=">">مقایسه: بزرگتر؟ (&gt;)</option>
+                                <option value="==">مقایسه: برابری؟ (==)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">عدد دوم (ثبات B)</label>
+                            <input type="number" id="alu-num2" value="9" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-emerald-400 font-bold focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <button onclick="runALU()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-all shadow-md shadow-emerald-600/20">
+                        اجرای عملیات توسط ALU ⚡
+                    </button>
+
+                    <!-- Result Screen -->
+                    <div id="alu-result-box" class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-400 block">نتیجه در ثبات خروجی:</span>
+                        <span id="alu-output" class="text-lg font-bold text-emerald-400">۲۱</span>
+                        <span id="alu-type" class="text-[10px] text-slate-400 block mt-1">(نوع عملیات: ریاضی)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CU vs ALU Distinction Box -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-sm">
+                <h3 class="font-bold text-slate-200 text-sm mb-3">تفکیک مهم: فرق CU و ALU در چیست؟</h3>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="p-3 bg-blue-950/40 rounded-xl border border-blue-800/40">
+                        <span class="font-bold text-blue-300 block mb-1">CU (مدیر)</span>
+                        <p class="text-slate-300">دستور را می‌فهمد، برنامه‌ریزی می‌کند و فرمان می‌دهد. خودش محاسبه نمیکند.</p>
+                    </div>
+                    <div class="p-3 bg-emerald-950/40 rounded-xl border border-emerald-800/40">
+                        <span class="font-bold text-emerald-300 block mb-1">ALU (مجری)</span>
+                        <p class="text-slate-300">فقط حساب و کتاب و مقایسه را انجام می‌دهد. فرمان‌پذیر است.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 2 Check Quiz -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+                <h4 class="font-bold text-emerald-400 text-sm mb-3 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    سؤال تثبیت یادگیری
+                </h4>
+                <p class="text-sm text-slate-300 mb-3">مقایسه دو عدد (مثلاً بررسی اینکه آیا نمره ≥ ۱۰ است یا نه) کار کدام بخش است؟</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <button onclick="checkQuiz2('cu')" class="quiz2-btn p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all">الف) CU (عملیات مدیریتی)</button>
+                    <button onclick="checkQuiz2('alu')" class="quiz2-btn p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all">ب) ALU (عملیات منطقی)</button>
+                </div>
+                <div id="quiz2-feedback" class="mt-3 text-xs font-semibold hidden"></div>
+            </div>
+
+            <!-- Transition Footer -->
+            <div class="flex justify-between items-center pt-2">
+                <p class="text-xs text-slate-400">ALU داده‌ها را از «ثبات» می‌گیرد؛ اما ثبات و حافظه پنهان چیستند؟</p>
+                <button onclick="switchTab('concept3')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-xl transition-all shadow-md shadow-emerald-600/20">
+                    رفتن به مفهوم ۳ ←
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== CONCEPT 3: REGISTERS & CACHE ==================== -->
+        <section id="content-concept3" class="space-y-6 hidden">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-amber-600 to-orange-700 rounded-2xl p-5 sm:p-6 text-white shadow-lg shadow-amber-900/20 border border-amber-600/30">
+                <div class="flex items-center justify-between gap-4 mb-2">
+                    <span class="text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md">مفهوم سوم (مهم)</span>
+                    <span class="text-xs opacity-90 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        زمان پیشنهادی: ۹ دقیقه
+                    </span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold">ثبات‌ها (Registers) و حافظه پنهان (Cache)</h2>
+                <p class="text-sm text-amber-200 mt-1">درک هرم حافظه و علت تفاوت سرعت و حجم حافظه‌ها</p>
+            </div>
+
+            <!-- Metaphor Story -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-sm">
+                <h3 class="font-bold text-slate-200 text-sm mb-2 flex items-center gap-2">
+                    <span>📚</span> داستان کتاب و هرم حافظه
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    اگر همه‌ی کتاب‌هایتان فقط در <strong>کتابخانه محله</strong> بود، برای هر فرمول باید یک رفت‌وبرگشت طولانی می‌کردید! 
+                    برای همین:
+                    کتاب فعلی را <strong>دست‌تان</strong> می‌گیرید، بقیه کتاب‌های امروز را روی <strong>میز</strong> می‌گذارید، دفترچه‌ها را در <strong>قفسه اتاق</strong> و بقیه را در <strong>کتابخانه</strong> نگه می‌دارید.
+                </p>
+            </div>
+
+            <!-- Interactive Pyramid Diagram -->
+            <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-sm">
+                <h3 class="text-xs font-bold text-slate-400 mb-3 text-center">هرم ۴ الطبقه حافظه (روی هر طبقه کلیک کنید)</h3>
+                
+                <div class="max-w-md mx-auto space-y-2">
+                    <!-- Layer 1: Registers -->
+                    <div onclick="selectPyramid(1)" id="pyr-1" class="pyr-item cursor-pointer bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 p-2.5 rounded-xl text-center transition-all">
+                        <div class="flex justify-between items-center text-xs px-2">
+                            <span class="font-bold text-amber-300">۱. ثبات (Register)</span>
+                            <span class="text-[10px] text-amber-200/80">کتاب در دست</span>
+                        </div>
+                    </div>
+
+                    <!-- Layer 2: Cache -->
+                    <div onclick="selectPyramid(2)" id="pyr-2" class="pyr-item cursor-pointer bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/60 p-3 rounded-xl text-center transition-all w-[90%] mx-auto">
+                        <div class="flex justify-between items-center text-xs px-2">
+                            <span class="font-bold text-purple-300">۲. حافظه پنهان (Cache)</span>
+                            <span class="text-[10px] text-purple-200/80">کتاب‌های روی میز</span>
+                        </div>
+                    </div>
+
+                    <!-- Layer 3: RAM -->
+                    <div onclick="selectPyramid(3)" id="pyr-3" class="pyr-item cursor-pointer bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/60 p-3.5 rounded-xl text-center transition-all w-[97%] mx-auto">
+                        <div class="flex justify-between items-center text-xs px-2">
+                            <span class="font-bold text-blue-300">۳. حافظه رم (RAM)</span>
+                            <span class="text-[10px] text-blue-200/80">قفسه اتاق</span>
+                        </div>
+                    </div>
+
+                    <!-- Layer 4: Hard Drive -->
+                    <div onclick="selectPyramid(4)" id="pyr-4" class="pyr-item cursor-pointer bg-slate-800 hover:bg-slate-750 border border-slate-700 p-4 rounded-xl text-center transition-all w-full">
+                        <div class="flex justify-between items-center text-xs px-2">
+                            <span class="font-bold text-slate-300">۴. حافظه دائمی (SSD/HDD)</span>
+                            <span class="text-[10px] text-slate-400">کتابخانه محله</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Display Box -->
+                <div id="pyramid-info" class="mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300">
+                    <!-- Dynamic text inserted here via JS -->
+                </div>
+            </div>
+
+            <!-- Key Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm">
+                    <span class="text-xs font-bold px-2 py-0.5 bg-amber-950 text-amber-300 rounded-md border border-amber-800/50">تعریف دقیق</span>
+                    <h4 class="font-bold text-slate-100 text-sm mt-2 mb-1">ثبات (Register)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <strong>پرسرعت‌ترین و گران‌ترین</strong> حافظه است. چون گران است، مقدارش خیلی کم بوده و <strong>داخل پردازنده</strong> قرار دارد. داده‌های لحظه‌ای پردازش را موقت نگه می‌دارد.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm">
+                    <span class="text-xs font-bold px-2 py-0.5 bg-purple-950 text-purple-300 rounded-md border border-purple-800/50">تعریف دقیق</span>
+                    <h4 class="font-bold text-slate-100 text-sm mt-2 mb-1">حافظه پنهان (Cache)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        حافظه بسیار سریعی که مقدار کمی داده پرکاربرد را موقت نگه می‌دارد تا زمان دسترسی پردازنده کم شود.
+                        <br><span class="text-slate-400 text-[11px] mt-1 block">💡 علت سریع‌تر باز شدن بار دوم سایت‌ها و بازی‌ها!</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Concept 3 Check Quiz -->
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+                <h4 class="font-bold text-amber-400 text-sm mb-3 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    تست تطبیق مفاهیم
+                </h4>
+                <p class="text-sm text-slate-300 mb-3">کدام تطبیق طبق «مثال کتابخانه» درست است؟</p>
+                <div class="space-y-2 text-xs">
+                    <button onclick="checkQuiz3('wrong')" class="quiz3-btn w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all block">الف) ثبات = کتابخانه محله | RAM = روی میز | هارد = دست شما</button>
+                    <button onclick="checkQuiz3('correct')" class="quiz3-btn w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-750 text-slate-200 text-right transition-all block">ب) ثبات = کتاب در دست | RAM = قفسه اتاق | هارد = کتابخانه محله</button>
+                </div>
+                <div id="quiz3-feedback" class="mt-3 text-xs font-semibold hidden"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 mt-8 py-4 text-center text-xs text-slate-400">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>طراحی شده برای یادگیری سریع و مفهومی دانش‌آموزان</span>
+            <span class="font-mono text-slate-500">CPU Inside • Interactive Learning</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Section -->
+    <script>
+        // Tab Switcher Logic
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('main > section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById('content-' + tabId);
+            if(targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Activate selected button
+            const targetBtn = document.getElementById('tab-' + tabId);
+            if(targetBtn) {
+                targetBtn.classList.add('active');
+            }
+
+            // Scroll smoothly to top of main content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Concept 1: CPU Detail Box Logic
+        function showDetail(type) {
+            const box = document.getElementById('cpu-detail-box');
+            if (type === 'cu') {
+                box.innerHTML = `<span class="text-blue-400 font-bold ml-1">واحد کنترل (CU):</span> مدیر پردازنده. دستورها را می‌گیرد، تحلیل می‌کند و دستور اجرا می‌دهد. (بدون محاسبه مستقیم)`;
+            } else if (type === 'alu') {
+                box.innerHTML = `<span class="text-emerald-400 font-bold ml-1">واحد ALU:</span> ماشین‌حساب سیستم. تمام جمع، تفریق‌ها و مقایسه‌های منطقی اینجا انجام می‌شود.`;
+            } else if (type === 'reg') {
+                box.innerHTML = `<span class="text-amber-400 font-bold ml-1">ثبات‌ها (Registers):</span> پرسرعت‌ترین حافظه‌های دم‌دست ALU برای نگهداری لحظه‌ای اعداد.`;
+            } else if (type === 'cache') {
+                box.innerHTML = `<span class="text-purple-400 font-bold ml-1">حافظه پنهان (Cache):</span> حافظه بسیار سریع برای ذخیره داده‌های پرکاربرد جهت کاهش معطلی CPU.`;
+            }
+        }
+
+        // Concept 1: Quiz Logic
+        function checkQuiz1(option) {
+            const feedback = document.getElementById('quiz1-feedback');
+            feedback.classList.remove('hidden', 'text-emerald-600', 'text-rose-600');
+            
+            if (option === 'b') {
+                feedback.classList.add('text-emerald-600');
+                feedback.innerHTML = '✅ آفرین! درست است. اولین کار CU «واکشی» (Fetch) دستور از حافظه است.';
+            } else {
+                feedback.classList.add('text-rose-600');
+                feedback.innerHTML = '❌ نادرست. اولین کار آوردن (واکشی) دستور است، سپس رمزگشایی و اجرا انجام می‌شود.';
+            }
+        }
+
+        // Concept 2: ALU Simulator Logic
+        function runALU() {
+            const n1 = parseFloat(document.getElementById('alu-num1').value) || 0;
+            const n2 = parseFloat(document.getElementById('alu-num2').value) || 0;
+            const op = document.getElementById('alu-op').value;
+            const outputEl = document.getElementById('alu-output');
+            const typeEl = document.getElementById('alu-type');
+
+            let res;
+            let isLogic = false;
+
+            if (op === '+') {
+                res = n1 + n2;
+                isLogic = false;
+            } else if (op === '-') {
+                res = n1 - n2;
+                isLogic = false;
+            } else if (op === '>') {
+                res = n1 > n2 ? "بله (True / درست)" : "خیر (False / نادرست)";
+                isLogic = true;
+            } else if (op === '==') {
+                res = n1 === n2 ? "بله (برابر هستند)" : "خیر (برابر نیستند)";
+                isLogic = true;
+            }
+
+            outputEl.innerText = res;
+            typeEl.innerText = isLogic ? "(نوع عملیات: منطقی - مقایسه)" : "(نوع عملیات: ریاضی)";
+        }
+
+        // Concept 2: Quiz Logic
+        function checkQuiz2(ans) {
+            const feedback = document.getElementById('quiz2-feedback');
+            feedback.classList.remove('hidden', 'text-emerald-600', 'text-rose-600');
+
+            if (ans === 'alu') {
+                feedback.classList.add('text-emerald-600');
+                feedback.innerHTML = '✅ کاملاً درست! انجام مقایسه‌ها، جزء عملیات منطقی است که وظیفه ALU می‌باشد.';
+            } else {
+                feedback.classList.add('text-rose-600');
+                feedback.innerHTML = '❌ دقت کنید! CU فقط مدیریت می‌کند و دستور می‌دهد؛ انجام مقایسه واقعی کار ALU است.';
+            }
+        }
+
+        // Concept 3: Memory Pyramid Selection
+        const pyramidData = {
+            1: {
+                title: "۱. ثبات (Register)",
+                metaphor: "کتابی که الان در دست‌تان باز است",
+                speed: "سریع‌ترین (بدون معطلی)",
+                capacity: "خیلی خیلی کم",
+                location: "مستقیماً داخل پردازنده",
+                desc: "گران‌ترین و سریع‌ترین حافظه. داده‌هایی که هم‌اکنون ALU روی آنها کار می‌کند اینجا قرار دارند."
+            },
+            2: {
+                title: "۲. حافظه پنهان (Cache)",
+                metaphor: "کتاب‌های روی میز مطالعه",
+                speed: "خیلی سریع",
+                capacity: "کمی بیشتر از ثبات (چند مگابایت)",
+                location: "داخل یا بسیار نزدیک پردازنده",
+                desc: "داده‌های پرکاربرد را نگه می‌دارد تا پردازنده مدام مجبور به مراجعه به RAM نشود."
+            },
+            3: {
+                title: "۳. حافظه اصلی (RAM)",
+                metaphor: "کتاب‌های داخل قفسه اتاق",
+                speed: "سریع",
+                capacity: "متوسط (مثلا ۸ تا ۳۲ گیگابایت)",
+                location: "بیرون از پردازنده (روی مادربورد)",
+                desc: "برنامه‌هایی که هم‌اکنون در حال اجرا هستند در RAM قرار می‌گیرند."
+            },
+            4: {
+                title: "۴. حافظه دائمی (SSD / Hard Disk)",
+                metaphor: "کتابخانه عمومی محله",
+                speed: "کندتر از بقیه",
+                capacity: "بسیار زیاد (چندین ترابایت)",
+                location: "بیرون از پردازنده",
+                desc: "اطلاعات به صورت ماندگار ذخیره می‌شوند حتی وقتی کامپیوتر خاموش است."
+            }
+        };
+
+        function selectPyramid(level) {
+            const data = pyramidData[level];
+            const infoBox = document.getElementById('pyramid-info');
+            
+            infoBox.innerHTML = `
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                        <span class="font-bold text-amber-400 text-sm">${data.title}</span>
+                        <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">تشبیه: ${data.metaphor}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 text-slate-400">
+                        <div>⚡ **سرعت:** <span class="text-slate-200">${data.speed}</span></div>
+                        <div>📦 **حجم:** <span class="text-slate-200">${data.capacity}</span></div>
+                        <div class="col-span-2">📍 **موقعیت:** <span class="text-slate-200">${data.location}</span></div>
+                    </div>
+                    <p class="text-[11px] text-slate-300 pt-1 border-t border-slate-900">${data.desc}</p>
+                </div>
+            `;
+        }
+
+        // Concept 3: Quiz Logic
+        function checkQuiz3(ans) {
+            const feedback = document.getElementById('quiz3-feedback');
+            feedback.classList.remove('hidden', 'text-emerald-600', 'text-rose-600');
+
+            if (ans === 'correct') {
+                feedback.classList.add('text-emerald-600');
+                feedback.innerHTML = '✅ عالی! ثبات مانند کتاب روی دست (سریع و محدود)، RAM مثل قفسه و هارد مانند کتابخانه است.';
+            } else {
+                feedback.classList.add('text-rose-600');
+                feedback.innerHTML = '❌ دوباره بررسی کنید! سریع‌ترین حافظه (ثبات) حکم کتاب در دست را دارد.';
+            }
+        }
+
+        // Initialize default view on load
+        window.onload = function() {
+            selectPyramid(1); // Set default active pyramid level to Registers
+        };
+    </script>
+</body>
+</html>
